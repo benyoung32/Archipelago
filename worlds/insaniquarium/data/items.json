@@ -1,0 +1,282 @@
+[
+  {
+    "id": 1,
+    "code_name": "TANK_1_UNLOCK",
+    "name": "Tank 1 Unlock",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Unlock"
+  },
+  {
+    "id": 2,
+    "code_name": "TANK_2_UNLOCK",
+    "name": "Tank 2 Unlock",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Unlock"
+  },
+  {
+    "id": 3,
+    "code_name": "TANK_3_UNLOCK",
+    "name": "Tank 3 Unlock",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Unlock"
+  },
+  {
+    "id": 4,
+    "code_name": "TANK_4_UNLOCK",
+    "name": "Tank 4 Unlock",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Unlock"
+  },
+  {
+    "id": 100,
+    "code_name": "FOOD_QUALITY",
+    "name": "Food Quality Upgrade",
+    "classification": "progression",
+    "quantity": 2,
+    "category": "Upgrade"
+  },
+  {
+    "id": 101,
+    "code_name": "FOOD_QUANTITY",
+    "name": "Food Quantity Upgrade",
+    "classification": "useful",
+    "quantity": 8,
+    "category": "Upgrade"
+  },
+  {
+    "id": 102,
+    "code_name": "PET_SLOT",
+    "name": "Pet Slot Upgrade",
+    "classification": "progression",
+    "quantity": 3,
+    "category": "Upgrade"
+  },
+  {
+    "id": 103,
+    "code_name": "STARTING_MONEY",
+    "name": "Starting Money +100",
+    "classification": "useful",
+    "quantity": 7,
+    "category": "Bonus"
+  },
+  {
+    "id": 104,
+    "code_name": "WEAPON_UPGRADE",
+    "name": "Progressive Weapon Upgrade",
+    "classification": "progression",
+    "quantity": 5,
+    "category": "Upgrade"
+  },
+  {
+    "id": 201,
+    "code_name": "STINKY",
+    "name": "Stinky the Snail",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 202,
+    "code_name": "NIKO",
+    "name": "Niko the Oyster",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 203,
+    "code_name": "ITCHY",
+    "name": "Itchy the Swordfish",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 204,
+    "code_name": "PREGO",
+    "name": "Prego the Mom Fish",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 205,
+    "code_name": "ZORF",
+    "name": "Zorf the Seahorse",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 206,
+    "code_name": "CLYDE",
+    "name": "Clyde the Jellyfish",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 207,
+    "code_name": "VERT",
+    "name": "Vert the Skeleton",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 208,
+    "code_name": "RUFUS",
+    "name": "Rufus the Crab",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 209,
+    "code_name": "MERYL",
+    "name": "Meryl the Mermaid",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 210,
+    "code_name": "WADSWORTH",
+    "name": "Wadsworth the Whale",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 211,
+    "code_name": "SEYMOUR",
+    "name": "Seymour the Turtle",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 212,
+    "code_name": "SHRAPNEL",
+    "name": "Shrapnel the Blowfish",
+    "classification": "useful",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 213,
+    "code_name": "GUMBO",
+    "name": "Gumbo the Angler",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 214,
+    "code_name": "BLIP",
+    "name": "Blip the Porpoise",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 215,
+    "code_name": "RHUBARB",
+    "name": "Rhubarb the Hermit Crab",
+    "classification": "useful",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 216,
+    "code_name": "NIMBUS",
+    "name": "Nimbus the Manta Ray",
+    "classification": "useful",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 217,
+    "code_name": "AMP",
+    "name": "Amp the Electric Eel",
+    "classification": "useful",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 218,
+    "code_name": "GASH",
+    "name": "Gash the Shark",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 219,
+    "code_name": "ANGIE",
+    "name": "Angie the Angelfish",
+    "classification": "useful",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 220,
+    "code_name": "PRESTO",
+    "name": "Presto the Tadpole",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Pet"
+  },
+  {
+    "id": 221,
+    "code_name": "BRINKLEY",
+    "name": "Brinkley the Scuba Elephant",
+    "classification": "useful",
+    "quantity": 1,
+    "category": "Bonus Pet"
+  },
+  {
+    "id": 222,
+    "code_name": "NOSTRADAMUS",
+    "name": "Nostradamus the Nose",
+    "classification": "useful",
+    "quantity": 1,
+    "category": "Bonus Pet"
+  },
+  {
+    "id": 223,
+    "code_name": "STANLEY",
+    "name": "Stanley the Sea Serpent",
+    "classification": "progression",
+    "quantity": 1,
+    "category": "Bonus Pet"
+  },
+  {
+    "id": 224,
+    "code_name": "WALTER",
+    "name": "Walter the Penguin",
+    "classification": "useful",
+    "quantity": 1,
+    "category": "Bonus Pet"
+  },
+  {
+    "id": 301,
+    "code_name": "TRAP_ALIEN_ATTACK",
+    "name": "Alien Attack Trap",
+    "classification": "trap",
+    "quantity": 0,
+    "category": "Trap"
+  },
+  {
+    "id": 302,
+    "code_name": "TRAP_FAMINE",
+    "name": "Famine Trap",
+    "classification": "trap",
+    "quantity": 0,
+    "category": "Trap"
+  }
+]

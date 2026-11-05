@@ -1,0 +1,52 @@
+# Player options YAML for Insaniquarium Deluxe
+name: Player{number}
+game: Insaniquarium Deluxe
+description: Default configuration for Insaniquarium Deluxe Archipelago
+
+Insaniquarium Deluxe:
+  progression_balancing: 50
+  accessibility: items
+
+  # Choose which tank you start with.
+  # Options:
+  #   random: Randomly pick one of Tank 1 through 4 (default)
+  #   tank_1: Start with Tank 1 unlocked
+  #   tank_2: Start with Tank 2 unlocked
+  #   tank_3: Start with Tank 3 unlocked
+  #   tank_4: Start with Tank 4 unlocked
+  starting_tank: random
+
+  # Controls how many egg purchases in each level provide an Archipelago check.
+  # 1: Only the 3rd egg piece (completing the level) is a check (20 level checks).
+  # 2: Egg pieces 1 and 3 are checks (40 level checks).
+  # 3: All 3 egg purchases in every level are checks (60 level checks, default).
+  egg_pieces_per_level: 3
+
+  # Set the completion goal required to beat the randomizer seed.
+  # Options:
+  #   defeat_cyrax: Defeat Cyrax in Tank 5 (unlocked after beating Tanks 1-4, default)
+  #   all_tanks: Complete the first 4 adventure tanks (Tank 1 through 4 Complete)
+  #   all_tanks_and_bonus: Complete Tanks 1-4 and collect all 4 Bonus Pets
+  #   full_completion: Defeat Cyrax and collect all 4 Bonus Pets
+  goal: defeat_cyrax
+
+  # Include the 4 Time Trial completion checks in the pool.
+  # Options: true (default), false
+  include_time_trials: true
+
+  # Include the 4 Bonus Pet checks in the pool.
+  # Options: true (default), false
+  include_bonus_pets: true
+
+  # Percentage chance to replace non-progression filler items with traps (0-100).
+  # Default: 0 (no traps)
+  trap_chance: 0
+
+  # Relative weight of Alien Attack Traps when a trap is selected.
+  # Default: 50
+  alien_attack_trap_weight: 50
+
+  # Relative weight of Famine Traps when a trap is selected.
+  # Default: 50
+  famine_trap_weight: 50
+
