@@ -9,7 +9,8 @@ GAME_NAME = "Insaniquarium Deluxe"
 WORLD_VERSION = "world_version"
 
 from . import item_data, location_data
-from .item_data import InsaniquariumItem, ITEM_DATA
+from .container import InsaniquariumContainer
+from .data.item_data import InsaniquariumItem, ITEM_DATA
 from .options import InsaniquariumOptions, StartingTank
 from .regions import regions
 from .rules import InsaniquariumRules
@@ -138,3 +139,13 @@ class InsaniquariumWorld(World):
             "goal": int(self.options.goal),
             "egg_pieces_per_level": int(self.options.egg_pieces_per_level),
         }
+
+    def generate_output(self, output_directory: str) -> None:
+        container = InsaniquariumContainer(
+            output_directory=output_directory,
+            player=self.player,
+            player_name=self.multiworld.get_file_safe_player_name(self.player),
+            world=self,
+        )
+        container.write()
+

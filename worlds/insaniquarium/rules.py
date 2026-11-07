@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from .item_data import (
+from .data.item_data import (
     TANK_1_UNLOCK,
     TANK_2_UNLOCK,
     TANK_3_UNLOCK,

@@ -68,7 +68,7 @@
     "code_name": "WEAPON_UPGRADE",
     "name": "Progressive Weapon Upgrade",
     "classification": "progression",
-    "quantity": 5,
+    "quantity": 10,
     "category": "Upgrade"
   },
   {

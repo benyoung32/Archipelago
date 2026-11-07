@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 
 from BaseClasses import Region
 
-from .item_data import InsaniquariumItem, VICTORY_ITEM_NAME
+from .data.item_data import InsaniquariumItem, VICTORY_ITEM_NAME
 from .location_data import (
     InsaniquariumLocation,
     InsaniquariumLocationData,

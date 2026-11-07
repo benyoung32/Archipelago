@@ -2,15 +2,15 @@
 """
 generate_data.py
 
-Single Source of Truth (SSOT) generator for Insaniquarium Deluxe Archipelago integration.
+Single Source of Truth generator for Insaniquarium Deluxe Archipelago integration.
 Reads:
   - world/insaniquarium/data/items.json
   - world/insaniquarium/data/locations.json
 
 Generates:
-  - world/insaniquarium/APDefinitions.h         (C++ enums, constants, string converters)
-  - world/insaniquarium/item_data.py            (Python APItem IntEnum, item_table, groups)
-  - world/insaniquarium/location_data.py        (Python InsaniquariumLocationData, groups)
+  - world/insaniquarium/APDefinitions.h              (C++ enums, constants, string converters)
+  - world/insaniquarium/data/item_data.py            (Python APItem IntEnum, item_table, groups)
+  - world/insaniquarium/data/location_data.py        (Python InsaniquariumLocationData, groups)
 
 Usage:
   python generate_data.py
@@ -247,7 +247,7 @@ def generate_python_items_data(items: List[Dict[str, Any]]) -> str:
         'GAME_NAME = "Insaniquarium Deluxe"',
         "",
         "if TYPE_CHECKING:",
-        "    from . import InsaniquariumWorld",
+        "    from .. import InsaniquariumWorld",
         "",
         "",
         "class InsaniquariumItem(Item):",
@@ -404,8 +404,8 @@ def main() -> int:
     repo_root = script_dir.parent.parent
 
     parser = argparse.ArgumentParser(description="Generate C++ and Python enums from JSON definitions.")
-    parser.add_argument("--items-json", type=Path, default=script_dir / "data" / "items.json")
-    parser.add_argument("--locations-json", type=Path, default=script_dir / "data" / "locations.json")
+    parser.add_argument("--items-json", type=Path, default=script_dir / "items.json")
+    parser.add_argument("--locations-json", type=Path, default=script_dir / "locations.json")
     parser.add_argument("--cpp-header", type=Path, default=script_dir / "APDefinitions.h")
     parser.add_argument("--py-items", type=Path, default=script_dir / "item_data.py")
     parser.add_argument("--py-locations", type=Path, default=script_dir / "location_data.py")
