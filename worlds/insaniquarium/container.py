@@ -74,8 +74,8 @@ class InsaniquariumContainer(APPlayerContainer):
     Container packaging player userdata save files into an AP container file.
     Visible on the WebHost room page with a 'Download Patch File...' link.
     """
-    game: str = "Insaniquarium Deluxe"
-    patch_file_ending: str = ".apinsani"
+    game = "Insaniquarium Deluxe"
+    patch_file_ending = ".apinsani"
 
     def __init__(
         self,
@@ -101,8 +101,8 @@ class InsaniquariumContainer(APPlayerContainer):
 
     def write_contents(self, opened_zipfile: zipfile.ZipFile) -> None:
         # Write userdata files in userdata/ directory (matching standard installation structure)
-        opened_zipfile.writestr("userdata/users.dat", self.users_data)
-        opened_zipfile.writestr("userdata/user1.dat", self.user1_data)
+        opened_zipfile.writestr("users.dat", self.users_data)
+        opened_zipfile.writestr("user1.dat", self.user1_data)
 
         # Write slot_data.json if available
         if self.slot_data is not None:

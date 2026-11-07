@@ -59,7 +59,7 @@
     "id": 103,
     "code_name": "STARTING_MONEY",
     "name": "Starting Money +100",
-    "classification": "useful",
+    "classification": "filler",
     "quantity": 7,
     "category": "Bonus"
   },
@@ -75,7 +75,7 @@
     "id": 201,
     "code_name": "STINKY",
     "name": "Stinky the Snail",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -83,7 +83,7 @@
     "id": 202,
     "code_name": "NIKO",
     "name": "Niko the Oyster",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -91,7 +91,7 @@
     "id": 203,
     "code_name": "ITCHY",
     "name": "Itchy the Swordfish",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -99,7 +99,7 @@
     "id": 204,
     "code_name": "PREGO",
     "name": "Prego the Mom Fish",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -107,7 +107,7 @@
     "id": 205,
     "code_name": "ZORF",
     "name": "Zorf the Seahorse",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -115,7 +115,7 @@
     "id": 206,
     "code_name": "CLYDE",
     "name": "Clyde the Jellyfish",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -123,7 +123,7 @@
     "id": 207,
     "code_name": "VERT",
     "name": "Vert the Skeleton",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -131,7 +131,7 @@
     "id": 208,
     "code_name": "RUFUS",
     "name": "Rufus the Crab",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -139,7 +139,7 @@
     "id": 209,
     "code_name": "MERYL",
     "name": "Meryl the Mermaid",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -147,7 +147,7 @@
     "id": 210,
     "code_name": "WADSWORTH",
     "name": "Wadsworth the Whale",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -155,7 +155,7 @@
     "id": 211,
     "code_name": "SEYMOUR",
     "name": "Seymour the Turtle",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -171,7 +171,7 @@
     "id": 213,
     "code_name": "GUMBO",
     "name": "Gumbo the Angler",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -179,7 +179,7 @@
     "id": 214,
     "code_name": "BLIP",
     "name": "Blip the Porpoise",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -211,7 +211,7 @@
     "id": 218,
     "code_name": "GASH",
     "name": "Gash the Shark",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -227,7 +227,7 @@
     "id": 220,
     "code_name": "PRESTO",
     "name": "Presto the Tadpole",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Pet"
   },
@@ -251,7 +251,7 @@
     "id": 223,
     "code_name": "STANLEY",
     "name": "Stanley the Sea Serpent",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 1,
     "category": "Bonus Pet"
   },

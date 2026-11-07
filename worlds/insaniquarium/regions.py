@@ -5,11 +5,9 @@ from typing import TYPE_CHECKING
 
 from BaseClasses import Region
 
-from .data.item_data import InsaniquariumItem, VICTORY_ITEM_NAME
-from .location_data import (
+from .data.location_data import (
     InsaniquariumLocation,
     InsaniquariumLocationData,
-    VICTORY_LOCATION_NAME,
 )
 
 if TYPE_CHECKING:
@@ -56,14 +54,6 @@ def create_regions(world: InsaniquariumWorld) -> None:
             regions[region_name] = region
 
         regions[region_name].add_locations(locations, InsaniquariumLocation)
-
-    # Victory event placed on Menu
-    menu.add_event(
-        VICTORY_LOCATION_NAME,
-        VICTORY_ITEM_NAME,
-        location_type=InsaniquariumLocation,
-        item_type=InsaniquariumItem,
-    )
 
 
 # Compatibility alias in case of `from .regions import regions`

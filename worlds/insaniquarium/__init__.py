@@ -8,7 +8,7 @@ from worlds.AutoWorld import World
 GAME_NAME = "Insaniquarium Deluxe"
 WORLD_VERSION = "world_version"
 
-from . import item_data, location_data
+from .data import item_data, location_data
 from .container import InsaniquariumContainer
 from .data.item_data import InsaniquariumItem, ITEM_DATA
 from .options import InsaniquariumOptions, StartingTank
@@ -68,12 +68,12 @@ class InsaniquariumWorld(World):
             if name != self.starting_tank_unlock:
                 itempool.append(self.create_item(name))
 
-        # 2. Priority Upgrades
-        priority_upgrades = (
-            [item_data.WEAPON_UPGRADE] * 5
-            + [item_data.FOOD_QUALITY] * 2
-            + [item_data.PET_SLOT] * 3
-            + [item_data.FOOD_QUANTITY] * 8
+        # 2. Upgrades
+        upgrades = (
+            [item_data.WEAPON_UPGRADE] * ITEM_DATA[item_data.WEAPON_UPGRADE].quantity
+            + [item_data.FOOD_QUALITY] * ITEM_DATA[item_data.FOOD_QUALITY].quantity
+            + [item_data.PET_SLOT] * ITEM_DATA[item_data.PET_SLOT].quantity
+            + [item_data.FOOD_QUANTITY] * ITEM_DATA[item_data.FOOD_QUANTITY].quantity
         )
 
         # 3. All 24 Pets
@@ -87,8 +87,11 @@ class InsaniquariumWorld(World):
         ]
 
         active_locations_count = len(self.multiworld.get_unfilled_locations(self.player))
-
-        for item_name in priority_upgrades:
+        # TODO: an error should be logged here if the amount of necessary items is > active locations 
+        # potentially these items should be randomly precollected or generation should just fail
+        # this check might have to happen in generate early
+        
+        for item_name in upgrades:
             if len(itempool) < active_locations_count:
                 itempool.append(self.create_item(item_name))
 
@@ -97,19 +100,8 @@ class InsaniquariumWorld(World):
                 itempool.append(self.create_item(pet_name))
 
         # 4. Fill remaining slots with filler or traps
-        needed_filler = active_locations_count - len(itempool)
-        trap_chance = int(getattr(self.options, "trap_chance", 0))
-        alien_weight = int(getattr(self.options, "alien_attack_trap_weight", 50))
-        famine_weight = int(getattr(self.options, "famine_trap_weight", 50))
-        trap_choices = [item_data.TRAP_ALIEN_ATTACK, item_data.TRAP_FAMINE]
-        trap_weights = [alien_weight, famine_weight]
-
-        for _ in range(needed_filler):
-            if trap_chance > 0 and (alien_weight + famine_weight > 0) and self.random.randint(1, 100) <= trap_chance:
-                trap_name = self.random.choices(trap_choices, weights=trap_weights, k=1)[0]
-                itempool.append(self.create_item(trap_name))
-            else:
-                itempool.append(self.create_item(item_data.STARTING_MONEY))
+        for _ in range(active_locations_count - len(itempool)):
+            itempool.append(self.get_filler_item())
 
         self.multiworld.itempool += itempool
 
@@ -128,6 +120,9 @@ class InsaniquariumWorld(World):
                 k=1,
             )[0]
         return item_data.STARTING_MONEY
+
+    def get_filler_item(self) -> InsaniquariumItem:
+        return self.create_item(self.get_filler_item_name())
 
     def set_rules(self) -> None:
         InsaniquariumRules(self).set_rules()

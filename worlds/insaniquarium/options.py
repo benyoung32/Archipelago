@@ -14,7 +14,7 @@ from Options import (
 class StartingTank(Choice):
     """Choose which tank you start with.
     Random: A random tank unlock (Tank 1 through 4) is given as starting inventory.
-    Tank 1 - 4: Explicitly begin with the selected tank unlocked."""
+    Tank 1 - 4: Begin with the selected tank unlocked."""
     display_name = "Starting Tank"
     option_random = 0
     option_tank_1 = 1
@@ -23,18 +23,21 @@ class StartingTank(Choice):
     option_tank_4 = 4
     default = 0
 
+# TODO: add starting pets option. the player could choose to start with a random selection of pets unlocked, 
+# how many starting slots to have, max number of slots  
 
 class EggPiecesPerLevel(Range):
     """Controls how many egg purchases in each level provide an Archipelago check.
-    1: Only the 3rd egg piece (completing the level) is a check (20 level checks).
+    1: Only the final egg piece is a check (20 level checks).
     2: Egg pieces 1 and 3 are checks (40 level checks).
-    3: All 3 egg purchases in every level are checks (60 level checks)."""
+    3: All 3 egg pieces in every level are checks (60 level checks)."""
     display_name = "Egg Pieces per Level"
     range_start = 1
     range_end = 3
     default = 3
 
-
+# TODO: rework these goals. the goals should be defeat cyrax, or full completion which is cyrax + time trials + challenge mode  
+# alternatively time trials and challenge mode can be options for completion goals as well 
 class Goal(Choice):
     """Set the completion goal for the randomizer seed.
     Defeat Cyrax: Defeat the final boss in Tank 5 (unlocked after beating Tanks 1-4).
@@ -49,15 +52,14 @@ class Goal(Choice):
     default = 0
 
 
+# TODO: add more bonus items and options for bonus starting money. 
+# bonus shells for unlocking bonus pets can be an option
+
+# TODO: add option for altering bonus pet cost. by default they are 20k shells x 4 
+# this will need to be added to slot_data.json 
 class IncludeTimeTrials(DefaultOnToggle):
-    """Include the 4 Time Trial completion checks in the randomizer pool."""
+    """Include 4 Time Trial completion checks in the randomizer pool."""
     display_name = "Include Time Trials"
-
-
-class IncludeBonusPets(DefaultOnToggle):
-    """Include the 4 Bonus Pet checks in the randomizer pool."""
-    display_name = "Include Bonus Pets"
-
 
 class TrapChance(Range):
     """Percentage chance to replace non-progression filler items with traps."""
@@ -89,7 +91,6 @@ class InsaniquariumOptions(PerGameCommonOptions):
     egg_pieces_per_level: EggPiecesPerLevel
     goal: Goal
     include_time_trials: IncludeTimeTrials
-    include_bonus_pets: IncludeBonusPets
     trap_chance: TrapChance
     alien_attack_trap_weight: AlienAttackTrapWeight
     famine_trap_weight: FamineTrapWeight
