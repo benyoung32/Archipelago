@@ -6,7 +6,7 @@
     Automates the release workflow for Insaniquarium Deluxe in Archipelago:
     1. Reads version and game metadata from archipelago.json.
     2. Auto-locates Python and builds the .apworld package (via build_insaniquarium.py).
-    3. Stages release assets (.apworld, Insaniquarium.yaml, and release_notes.md).
+    3. Stages release assets (.apworld, Insaniquarium.yaml, and source code zip).
     4. Generates formatted markdown release notes tailored for Archipelago.
     5. Publishes a GitHub Release with assets attached using the GitHub CLI (gh).
 
@@ -108,7 +108,8 @@ if (-not (Test-Path $manifestPath)) {
 # -----------------------------------------------------------------------------
 try {
     $manifest = Get-Content -Path $manifestPath -Raw -Encoding utf8 | ConvertFrom-Json
-} catch {
+}
+catch {
     Log-Error "Failed to parse archipelago.json: $_"
     exit 1
 }
@@ -139,7 +140,8 @@ Log-Info "Release Title:    $Title"
 # -----------------------------------------------------------------------------
 try {
     $gitBranch = (git -C $repoRoot rev-parse --abbrev-ref HEAD 2>$null).Trim()
-} catch {
+}
+catch {
     $gitBranch = "main"
 }
 
@@ -156,7 +158,8 @@ try {
         Log-Warn "Commit or stash your changes before releasing, or pass -AllowDirty to proceed."
         exit 1
     }
-} catch {
+}
+catch {
     Log-Warn "Unable to check git working tree status."
 }
 
@@ -167,10 +170,12 @@ try {
         $repoOwner = $Matches[1]
         $repoName = $Matches[2]
         $repoWebUrl = "https://github.com/$repoOwner/$repoName"
-    } else {
+    }
+    else {
         $repoWebUrl = "https://github.com/benyoung32/Archipelago"
     }
-} catch {
+}
+catch {
     $repoWebUrl = "https://github.com/benyoung32/Archipelago"
 }
 
@@ -208,7 +213,8 @@ function Find-PythonExe {
     try {
         $ver = & python --version 2>&1
         if ($LASTEXITCODE -eq 0) { return "python" }
-    } catch {}
+    }
+    catch {}
 
     # Probe typical local Python installations
     $candidates = @(
@@ -246,7 +252,8 @@ if (-not $SkipBuild) {
         Log-Error "Failed to build APWorld package!"
         exit 1
     }
-} else {
+}
+else {
     Log-Info "Skipping build step (-SkipBuild specified). Using existing $apworldBuildPath"
 }
 
@@ -268,36 +275,78 @@ if (-not (Test-Path $stagingDir)) {
     New-Item -ItemType Directory -Path $stagingDir -Force | Out-Null
 }
 
-$stagedApworld = Join-Path $stagingDir "insaniquarium.apworld"
-$stagedYaml = Join-Path $stagingDir "Insaniquarium.yaml"
-$stagedNotes = Join-Path $stagingDir "release_notes.md"
+$stagedApworld   = Join-Path $stagingDir "insaniquarium.apworld"
+$stagedYaml      = Join-Path $stagingDir "Insaniquarium.yaml"
+$stagedSourceZip = Join-Path $stagingDir "insaniquarium-source-v$Version.zip"
+$stagedNotes     = Join-Path $stagingDir "release_notes.md"
 
 Copy-Item -Path $apworldBuildPath -Destination $stagedApworld -Force
 Copy-Item -Path $yamlSrcPath -Destination $stagedYaml -Force
 
-Log-Success "Staged apworld: $stagedApworld ($((Get-Item $stagedApworld).Length.ToString('N0')) bytes)"
-Log-Success "Staged yaml:    $stagedYaml"
+Log-Success "Staged apworld:    $stagedApworld ($((Get-Item $stagedApworld).Length.ToString('N0')) bytes)"
+Log-Success "Staged yaml:       $stagedYaml"
+
+# Build source code zip archive
+Log-Info "Creating source code zip archive ($((Split-Path $stagedSourceZip -Leaf)))..."
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+if (Test-Path $stagedSourceZip) {
+    Remove-Item -Path $stagedSourceZip -Force
+}
+
+$zipStream = [System.IO.File]::Open($stagedSourceZip, [System.IO.FileMode]::Create)
+$archive = New-Object System.IO.Compression.ZipArchive($zipStream, [System.IO.Compression.ZipArchiveMode]::Create)
+
+try {
+    $sourceFiles = Get-ChildItem -Path $worldDir -Recurse | Where-Object {
+        -not $_.PSIsContainer -and
+        $_.FullName -notmatch '[\\/]__pycache__([\\/]|$)' -and
+        $_.Extension -ne '.pyc' -and
+        $_.FullName -notmatch '[\\/]\.git([\\/]|$)'
+    }
+
+    foreach ($file in $sourceFiles) {
+        $rel = $file.FullName.Substring($worldDir.Length).TrimStart('\', '/')
+        # Use forward slashes inside zip for POSIX compatibility
+        $entryName = "insaniquarium/" + ($rel -replace '\\', '/')
+        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+            $archive,
+            $file.FullName,
+            $entryName,
+            [System.IO.Compression.CompressionLevel]::Optimal
+        ) | Out-Null
+    }
+}
+finally {
+    $archive.Dispose()
+    $zipStream.Dispose()
+}
+
+Log-Success "Staged source zip: $stagedSourceZip ($((Get-Item $stagedSourceZip).Length.ToString('N0')) bytes)"
 
 # -----------------------------------------------------------------------------
 # 7. Prepare Release Notes
 # -----------------------------------------------------------------------------
 if ($Notes) {
     $releaseNotesContent = $Notes
-} elseif ($NotesFile -and (Test-Path $NotesFile)) {
+}
+elseif ($NotesFile -and (Test-Path $NotesFile)) {
     $releaseNotesContent = Get-Content -Path $NotesFile -Raw -Encoding utf8
-} else {
+}
+else {
     $releaseNotesContent = @"
 # $gameName APWorld v$Version
 
 Archipelago world integration for **Insaniquarium Deluxe** (PopCap / Steam).
 
-## 📋 Requirements
+## Requirements
 - **Archipelago**: [v$minApVersion or newer](https://github.com/ArchipelagoMW/Archipelago/releases)
 - **Game**: *Insaniquarium Deluxe* English PC release (Steam / PopCap)
-
+- **APFish**: [Latest Version](https://github.com/benyoung32/WinFish)
 ---
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
 ### For Players & Multiworld Hosts:
 1. Download **`insaniquarium.apworld`** from the Assets below.
@@ -310,22 +359,22 @@ Archipelago world integration for **Insaniquarium Deluxe** (PopCap / Steam).
 ### Playing:
 1. Generate your multiworld game.
 2. The generator will produce your `.apinsani` patch file.
-3. Use the Insaniquarium client/patcher to connect and sync your adventure progress!
+3. Use the Import button inside the Insaniquarium profile menu to load the provided patch file and input the connection info for your Archipelago server.
 
 ---
 
-## 🎮 Features & Options
+## Features & Options
 - **Starting Tank**: Choose between starting in Tank 1, 2, 3, 4, or random.
-- **Egg Checks**: Configurable egg piece checks (1, 2, or all 3 purchases per Adventure level).
+- **Egg Checks**: Configurable egg piece checks (1, 2, or all 3 per level).
 - **Goal Selection**: Defeat Cyrax, Complete All 4 Tanks, or Full 100% Completion.
-- **Bonus Checks**: Optional Time Trial checks and Bonus Pets (Nostradamus, Stanley, Walter, Brinkley).
 - **Traps**: Optional Alien Attack and Famine traps.
 
 ---
 
-## 📦 Release Assets
+## Release Assets
 - **`insaniquarium.apworld`**: Archipelago game world package.
 - **`Insaniquarium.yaml`**: Player configuration YAML template.
+- **`insaniquarium-source-v$Version.zip`**: Source code of the Insaniquarium Deluxe world.
 "@
 }
 
@@ -341,10 +390,11 @@ if ($LocalOnly) {
     Write-Host "Files prepared in: $stagingDir" -ForegroundColor Green
     Write-Host "  - insaniquarium.apworld"
     Write-Host "  - Insaniquarium.yaml"
+    Write-Host "  - insaniquarium-source-v$Version.zip"
     Write-Host "  - release_notes.md"
     Write-Host ""
     Write-Host "To publish manually later, you can run:" -ForegroundColor DarkGray
-    Write-Host "  gh release create $Tag `"$stagedApworld`" `"$stagedYaml`" --title `"$Title`" --notes-file `"$stagedNotes`" --target `"$Target`"" -ForegroundColor DarkGray
+    Write-Host "  gh release create $Tag `"$stagedApworld`" `"$stagedYaml`" `"$stagedSourceZip`" --title `"$Title`" --notes-file `"$stagedNotes`" --target `"$Target`"" -ForegroundColor DarkGray
     exit 0
 }
 
@@ -354,6 +404,7 @@ $ghArgs = @(
     "release", "create", $Tag,
     $stagedApworld,
     $stagedYaml,
+    $stagedSourceZip,
     "--title", $Title,
     "--notes-file", $stagedNotes,
     "--target", $Target
@@ -375,7 +426,8 @@ try {
         Log-Error "GitHub CLI release command returned error code $LASTEXITCODE"
         exit 1
     }
-} catch {
+}
+catch {
     Log-Error "Failed to execute gh release command: $_"
     exit 1
 }
