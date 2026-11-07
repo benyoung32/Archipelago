@@ -64,6 +64,7 @@ def build_apworld(world_dir: pathlib.Path, output_path: pathlib.Path) -> pathlib
     ignore_patterns = [
         "__pycache__", "*.pyc", "test", "test/*", "*.yaml", ".git*",
         "APDefinitions.h", "generate_data.py", ".apignore", "build_insaniquarium.*",
+        "release_insaniquarium.*", "*.ps1",
     ]
     apignore_file = world_dir / ".apignore"
     if apignore_file.is_file():

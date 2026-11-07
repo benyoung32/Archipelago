@@ -54,6 +54,23 @@ class Goal(Choice):
 
 # TODO: add more bonus items and options for bonus starting money. 
 # bonus shells for unlocking bonus pets can be an option
+class BonusShellsWeight(Range):
+    """
+    This is summed with other bonus item weights to determine the probability of receiving bonus money.
+    """
+    display_name = "Bonus Shells Weight"
+    range_start = 0
+    range_end = 100
+    default = 0
+
+class BonusMoneyWeight(Range):
+    """
+    This is summed with other bonus item weights to determine the probability of receiving bonus money.
+    """
+    display_name = "Bonus Money Weight"
+    range_start = 1
+    range_end = 100
+    default = 1
 
 # TODO: add option for altering bonus pet cost. by default they are 20k shells x 4 
 # this will need to be added to slot_data.json 

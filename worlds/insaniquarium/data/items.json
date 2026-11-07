@@ -60,7 +60,7 @@
     "code_name": "STARTING_MONEY",
     "name": "Starting Money +100",
     "classification": "filler",
-    "quantity": 7,
+    "quantity": 0,
     "category": "Bonus"
   },
   {
@@ -70,6 +70,14 @@
     "classification": "progression",
     "quantity": 10,
     "category": "Upgrade"
+  },
+  {
+    "id": 105,
+    "code_name": "BONUS_SHELLS",
+    "name": "Bonus Shells",
+    "classification": "filler",
+    "quantity": 0,
+    "category": "Bonus"
   },
   {
     "id": 201,

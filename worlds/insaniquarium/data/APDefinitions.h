@@ -23,6 +23,7 @@ namespace Sexy
 		PET_SLOT = 102LL, // Pet Slot Upgrade
 		STARTING_MONEY = 103LL, // Starting Money +100
 		WEAPON_UPGRADE = 104LL, // Progressive Weapon Upgrade
+		BONUS_SHELLS = 105LL, // Bonus Shells
 		STINKY = 201LL, // Stinky the Snail
 		NIKO = 202LL, // Niko the Oyster
 		ITCHY = 203LL, // Itchy the Swordfish
@@ -142,6 +143,7 @@ namespace Sexy
 	static const int64_t AP_ITEM_PET_SLOT = 102LL;
 	static const int64_t AP_ITEM_STARTING_MONEY = 103LL;
 	static const int64_t AP_ITEM_WEAPON_UPGRADE = 104LL;
+	static const int64_t AP_ITEM_BONUS_SHELLS = 105LL;
 	static const int64_t AP_ITEM_STINKY = 201LL;
 	static const int64_t AP_ITEM_NIKO = 202LL;
 	static const int64_t AP_ITEM_ITCHY = 203LL;
@@ -259,6 +261,7 @@ namespace Sexy
 		case APItem::PET_SLOT: return "Pet Slot Upgrade";
 		case APItem::STARTING_MONEY: return "Starting Money +100";
 		case APItem::WEAPON_UPGRADE: return "Progressive Weapon Upgrade";
+		case APItem::BONUS_SHELLS: return "Bonus Shells";
 		case APItem::STINKY: return "Stinky the Snail";
 		case APItem::NIKO: return "Niko the Oyster";
 		case APItem::ITCHY: return "Itchy the Swordfish";

@@ -5,4 +5,10 @@ __pycache__/
 *.pyc
 *.yaml
 build_insaniquarium.*
+release_insaniquarium.*
+*.ps1
+release
+release/**
+release_insaniquarium.*
+*.ps1
 
