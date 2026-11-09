@@ -18,8 +18,8 @@ class TestExcludeTimeTrials(InsaniquariumTestBase):
         self.assertNotIn("Time Trial 2", loc_names)
         self.assertNotIn("Time Trial 3", loc_names)
         self.assertNotIn("Time Trial 4", loc_names)
-        self.assertEqual(len(unfilled_locs), 69)
-        self.assertEqual(len(self.multiworld.itempool), 69)
+        self.assertEqual(len(unfilled_locs), 73)
+        self.assertEqual(len(self.multiworld.itempool), 73)
 
 
 class TestExcludeBonusPets(InsaniquariumTestBase):
@@ -34,8 +34,8 @@ class TestExcludeBonusPets(InsaniquariumTestBase):
         self.assertNotIn("Bonus Pet 2", loc_names)
         self.assertNotIn("Bonus Pet 3", loc_names)
         self.assertNotIn("Bonus Pet 4", loc_names)
-        self.assertEqual(len(unfilled_locs), 69)
-        self.assertEqual(len(self.multiworld.itempool), 69)
+        self.assertEqual(len(unfilled_locs), 73)
+        self.assertEqual(len(self.multiworld.itempool), 73)
 
 
 class TestTrapChance100(InsaniquariumTestBase):
@@ -60,7 +60,7 @@ class TestMinimalLocations(InsaniquariumTestBase):
 
     def test_minimal_pool_and_locations(self) -> None:
         unfilled_locs = self.multiworld.get_unfilled_locations(self.player)
-        # 20 egg checks + 4 tank completes + 1 Cyrax = 25 locations
-        self.assertEqual(len(unfilled_locs), 25)
-        self.assertEqual(len(self.multiworld.itempool), 25)
+        # 20 egg checks + 4 tank completes + 4 challenge completes + 1 Cyrax = 29 locations
+        self.assertEqual(len(unfilled_locs), 29)
+        self.assertEqual(len(self.multiworld.itempool), 29)
 

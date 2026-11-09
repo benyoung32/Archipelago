@@ -354,7 +354,7 @@ Archipelago world integration for **Insaniquarium Deluxe** (PopCap / Steam).
    - **Launcher**: Double-click `insaniquarium.apworld` to automatically install it into your Archipelago Launcher.
    - **Manual**: Place `insaniquarium.apworld` into your Archipelago `custom_worlds/` directory (e.g. `C:\ProgramData\Archipelago\custom_worlds`).
 3. Download **`Insaniquarium.yaml`** and place it in your Archipelago `Players/` folder.
-4. Customize your options (starting tank, egg pieces per level, goal, and trap rates) before generating.
+4. Customize your options (starting tank, egg pieces per level, victory conditions, and trap rates) before generating.
 
 ### Playing:
 1. Generate your multiworld game.
@@ -366,7 +366,8 @@ Archipelago world integration for **Insaniquarium Deluxe** (PopCap / Steam).
 ## Features & Options
 - **Starting Tank**: Choose between starting in Tank 1, 2, 3, 4, or random.
 - **Egg Checks**: Configurable egg piece checks (1, 2, or all 3 per level).
-- **Goal Selection**: Defeat Cyrax, Complete All 4 Tanks, or Full 100% Completion.
+- **Victory Conditions**: Completing Tanks 1-4 is always required; optionally require Cyrax, Time Trials, or Challenge Mode.
+- **Upgrade Availability**: Control when received upgrades become accessible (always, free upon receiving, or normal shop price).
 - **Traps**: Optional Alien Attack and Famine traps.
 
 ---

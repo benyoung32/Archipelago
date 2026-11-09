@@ -8,7 +8,8 @@ from ..item_data import (
 
 class TestGoalDefeatCyrax(InsaniquariumTestBase):
     options = {
-        "goal": 0,  # Defeat Cyrax
+        "cyrax_required": True,
+        "time_trial_required": False,
         "starting_tank": 1,
     }
 
@@ -24,42 +25,48 @@ class TestGoalDefeatCyrax(InsaniquariumTestBase):
         self.assertBeatable(True)
 
 
-class TestGoalAllTanks(InsaniquariumTestBase):
+class TestGoalAllTanksOnly(InsaniquariumTestBase):
     options = {
-        "goal": 1,  # All Tanks
+        "cyrax_required": False,
+        "time_trial_required": False,
         "starting_tank": 1,
     }
 
     def test_all_tanks_logic(self) -> None:
         self.assertBeatable(False)
 
-        # Collect all tank unlocks
+        # Collect all tank unlocks -> Tanks 1-4 complete
         self.collect_by_name([TANK_2_UNLOCK, TANK_3_UNLOCK, TANK_4_UNLOCK])
         self.assertBeatable(True)
 
 
-class TestGoalAllTanksAndBonus(InsaniquariumTestBase):
+class TestGoalTimeTrialsRequired(InsaniquariumTestBase):
     options = {
-        "goal": 2,  # All Tanks & Bonus Pets
+        "cyrax_required": False,
+        "time_trial_required": True,
         "starting_tank": 1,
     }
 
-    def test_all_tanks_and_bonus_logic(self) -> None:
+    def test_time_trials_logic(self) -> None:
         self.assertBeatable(False)
 
+        # Collect all tank unlocks -> Tanks 1-4 and Time Trials accessible
         self.collect_by_name([TANK_2_UNLOCK, TANK_3_UNLOCK, TANK_4_UNLOCK])
         self.assertBeatable(True)
 
 
-class TestGoalFullCompletion(InsaniquariumTestBase):
+class TestGoalCyraxAndTimeTrials(InsaniquariumTestBase):
     options = {
-        "goal": 3,  # Full Completion (Cyrax + Bonus Pets)
+        "cyrax_required": True,
+        "time_trial_required": True,
         "starting_tank": 1,
     }
 
-    def test_full_completion_logic(self) -> None:
+    def test_cyrax_and_time_trials_logic(self) -> None:
         self.assertBeatable(False)
 
-        self.collect_by_name([TANK_2_UNLOCK, TANK_3_UNLOCK, TANK_4_UNLOCK])
-        self.assertBeatable(True)
+        self.collect_by_name([TANK_2_UNLOCK, TANK_3_UNLOCK])
+        self.assertBeatable(False)
 
+        self.collect_by_name(TANK_4_UNLOCK)
+        self.assertBeatable(True)

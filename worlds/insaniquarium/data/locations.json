@@ -85,6 +85,11 @@
     "region": "Tank 1"
   },
   {
+    "code_name": "CHALLENGE_1_COMPLETE",
+    "name": "Challenge 1 Complete",
+    "region": "Tank 1"
+  },
+  {
     "code_name": "TANK_2_COMPLETE",
     "name": "Tank 2 Complete",
     "region": "Tank 2"
@@ -167,6 +172,11 @@
   {
     "code_name": "TIME_TRIAL_2_COMPLETE",
     "name": "Time Trial 2 Complete",
+    "region": "Tank 2"
+  },
+  {
+    "code_name": "CHALLENGE_2_COMPLETE",
+    "name": "Challenge 2 Complete",
     "region": "Tank 2"
   },
   {
@@ -255,6 +265,11 @@
     "region": "Tank 3"
   },
   {
+    "code_name": "CHALLENGE_3_COMPLETE",
+    "name": "Challenge 3 Complete",
+    "region": "Tank 3"
+  },
+  {
     "code_name": "TANK_4_COMPLETE",
     "name": "Tank 4 Complete",
     "region": "Tank 4"
@@ -337,6 +352,11 @@
   {
     "code_name": "TIME_TRIAL_4_COMPLETE",
     "name": "Time Trial 4 Complete",
+    "region": "Tank 4"
+  },
+  {
+    "code_name": "CHALLENGE_4_COMPLETE",
+    "name": "Challenge 4 Complete",
     "region": "Tank 4"
   },
   {

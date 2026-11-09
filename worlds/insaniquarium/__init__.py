@@ -54,6 +54,10 @@ class InsaniquariumWorld(World):
 
         self.multiworld.push_precollected(self.create_item(self.starting_tank_unlock))
 
+        # If time trials are required to beat the game, ensure their check locations are in the pool
+        if bool(getattr(self.options, "time_trial_required", False)) and not bool(getattr(self.options, "include_time_trials", True)):
+            self.options.include_time_trials.value = 1
+
     def create_regions(self) -> None:
         """Method for creating and connecting regions for the World."""
         regions.create_regions(self)
@@ -122,8 +126,12 @@ class InsaniquariumWorld(World):
         return {
             WORLD_VERSION: self.world_version.as_simple_string(),
             "starting_tank_unlock": self.starting_tank_unlock,
-            "goal": int(self.options.goal),
             "egg_pieces_per_level": int(self.options.egg_pieces_per_level),
+            "cyrax_required": bool(self.options.cyrax_required),
+            "time_trial_required": bool(self.options.time_trial_required),
+            "challenge_mode_required": bool(self.options.challenge_mode_required),
+            "upgrade_availability": int(self.options.upgrade_availability),
+            "aliensanity": bool(self.options.aliensanity),
         }
 
     def generate_output(self, output_directory: str) -> None:

@@ -22,13 +22,36 @@ Insaniquarium Deluxe:
   # 3: All 3 egg purchases in every level are checks (60 level checks, default).
   egg_pieces_per_level: 3
 
-  # Set the completion goal required to beat the randomizer seed.
-  # Options:
-  #   defeat_cyrax: Defeat Cyrax in Tank 5 (unlocked after beating Tanks 1-4, default)
-  #   all_tanks: Complete the first 4 adventure tanks (Tank 1 through 4 Complete)
-  #   all_tanks_and_bonus: Complete Tanks 1-4 and collect all 4 Bonus Pets
-  #   full_completion: Defeat Cyrax and collect all 4 Bonus Pets
-  goal: defeat_cyrax
+  # Completing all 4 tanks is always a victory condition. Additional victory conditions below:
+  # Require defeating Cyrax in Tank 5 to win the game.
+  # Options: true (default), false
+  cyrax_required: true
+
+  # Require beating all 4 Time Trials to win the game.
+  # Options: true, false (default)
+  time_trial_required: false
+
+  # Require beating Challenge Mode to win the game.
+  # Options: true, false (default)
+  challenge_mode_required: false
+
+  # Controls when received upgrade items are available during each level:
+  #   always: Upgrades are immediately applied once recevied
+  #   free: Upgrades are available for free once received (default)
+  #   normal_price: Upgrades are available for normal price once received
+  upgrade_availability: free
+
+  # Relative weight of bonus starting money when filler items are generated.
+  # Default: 1
+  bonus_money_weight: 1
+
+  # Relative weight of bonus shells when filler items are generated.
+  # Default: 0
+  bonus_shells_weight: 0
+
+  # Defeating aliens for the first time provides an Archipelago check.
+  # Options: true, false (default)
+  aliensanity: false
 
   # Include the 4 Time Trial completion checks in the pool.
   # Options: true (default), false
