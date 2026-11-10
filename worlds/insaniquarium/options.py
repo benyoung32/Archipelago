@@ -24,8 +24,25 @@ class StartingTank(Choice):
     option_tank_4 = 4
     default = 0
 
-# TODO: add starting pets option. the player could choose to start with a random selection of pets unlocked, 
-# how many starting slots to have, max number of slots  
+class StartingPetSlots(Range):
+    """
+    Controls how many pet slots to start with.
+    """
+    display_name = "Starting Pet Slots"
+    range_start = 0
+    range_end = 24
+    default = 0
+
+class PetSlotItems(Range):
+    """
+    Controls how many unlockable pet slots are available as items.
+    Combined with the above option, the total number of pet slots in the game will be
+    Starting Pet Slots + Pet Slot Items 
+    """
+    display_name = "Pet Slot Items"
+    range_start = 0
+    range_end = 24
+    default = 3
 
 # TODO: add mid level check option. 
 # 0 - none
@@ -44,10 +61,9 @@ class EggPiecesPerLevel(Range):
 
 "Completing all 4 tanks is always a victory condition. Add extra conditions below"
 
-class CyraxRequired(Toggle):
+class CyraxRequired(DefaultOnToggle):
     "Control if cyrax is necessary to win"
     display_name = "Cyrax Required"
-    default = True
 
 class TimeTrialRequired(Toggle):
     "Control if time trials are necessary to win"
@@ -59,6 +75,15 @@ class ChallengeModeRequired(Toggle):
     default = False    
 
 # TODO: potentially add virtual tank win condition
+class BonusPetLocations(Range):
+    """Controls how many bonus pets are location checks (0 to 4).
+    0: Disables bonus pet checks.
+    1-4: Bonus Pet 1 through the selected number are location checks."""
+    display_name = "Bonus Pet Locations"
+    range_start = 0
+    range_end = 4
+    default = 0
+
 
 class UpgradeAvailbility(Choice):
     """Controls when received upgrade items are available during each level
@@ -94,8 +119,14 @@ class BonusMoneyWeight(Range):
 # TODO: add option for altering bonus pet cost. by default they are 20k shells x 4 
 # this will need to be added to slot_data.json 
 class IncludeTimeTrials(DefaultOnToggle):
-    """Include 4 Time Trial completion checks in the randomizer pool."""
+    """Include 4 Time Trial completion checks in the randomizer pool.
+    NOTE: This option is overwritten by 'Time Trial Required' if enabled."""
     display_name = "Include Time Trials"
+
+class IncludeChallengeMode(DefaultOnToggle):
+    """Include 4 Challenge Mode completion checks in the randomizer pool.
+    NOTE: This option is overwritten by 'Challenge Mode Required' if enabled."""
+    display_name = "Include Challenge Mode"
 
 class TrapChance(Range):
     """Percentage chance to replace non-progression filler items with traps."""
@@ -105,8 +136,6 @@ class TrapChance(Range):
     default = 0
 
 
-# TODO: aliensanity option
-# defeating aliens for the first time is a check
 class Aliensanity(Toggle):
     """Control if defeating aliens for the first time is a check"""
     display_name = "Aliensanity"
@@ -142,8 +171,12 @@ class InsaniquariumOptions(PerGameCommonOptions):
     bonus_shells_weight: BonusShellsWeight
     bonus_money_weight: BonusMoneyWeight
     include_time_trials: IncludeTimeTrials
+    include_challenge_mode: IncludeChallengeMode
+    bonus_pet_locations: BonusPetLocations
     aliensanity: Aliensanity
     trap_chance: TrapChance
     alien_attack_trap_weight: AlienAttackTrapWeight
     famine_trap_weight: FamineTrapWeight
     start_inventory_from_pool: StartInventoryPool
+    starting_pet_slots: StartingPetSlots
+    pet_slot_items: PetSlotItems

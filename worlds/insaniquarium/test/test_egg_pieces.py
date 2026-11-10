@@ -8,8 +8,8 @@ class TestEggPieces1(InsaniquariumTestBase):
 
     def test_egg_pieces_1_counts_and_locations(self) -> None:
         unfilled_locs = self.multiworld.get_unfilled_locations(self.player)
-        self.assertEqual(len(unfilled_locs), 33)
-        self.assertEqual(len(self.multiworld.itempool), 33)
+        self.assertEqual(len(unfilled_locs), 37)
+        self.assertEqual(len(self.multiworld.itempool), 37)
 
         loc_names = {loc.name for loc in unfilled_locs}
         self.assertIn("Tank 1-1 Egg Piece 3", loc_names)
@@ -24,8 +24,8 @@ class TestEggPieces2(InsaniquariumTestBase):
 
     def test_egg_pieces_2_counts_and_locations(self) -> None:
         unfilled_locs = self.multiworld.get_unfilled_locations(self.player)
-        self.assertEqual(len(unfilled_locs), 53)
-        self.assertEqual(len(self.multiworld.itempool), 53)
+        self.assertEqual(len(unfilled_locs), 57)
+        self.assertEqual(len(self.multiworld.itempool), 57)
 
         loc_names = {loc.name for loc in unfilled_locs}
         self.assertIn("Tank 1-1 Egg Piece 1", loc_names)
@@ -40,8 +40,8 @@ class TestEggPieces3(InsaniquariumTestBase):
 
     def test_egg_pieces_3_counts_and_locations(self) -> None:
         unfilled_locs = self.multiworld.get_unfilled_locations(self.player)
-        self.assertEqual(len(unfilled_locs), 73)
-        self.assertEqual(len(self.multiworld.itempool), 73)
+        self.assertEqual(len(unfilled_locs), 77)
+        self.assertEqual(len(self.multiworld.itempool), 77)
 
         loc_names = {loc.name for loc in unfilled_locs}
         self.assertIn("Tank 1-1 Egg Piece 1", loc_names)

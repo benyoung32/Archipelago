@@ -150,9 +150,6 @@ ITEM_NAME_GROUPS: dict[str, set[str]] = {}
 for _name, _data in ITEM_DATA.items():
     ITEM_NAME_GROUPS.setdefault(_data.category, set()).add(_name)
 
-# Event item placed on the Victory event location; never in the pool and has no id.
-VICTORY_ITEM_NAME = "Victory"
-
 item_table: dict[str, InsaniquariumItemData] = ITEM_DATA
 item_name_to_id: dict[str, int] = ITEM_NAME_TO_ID
 item_name_groups: dict[str, set[str]] = ITEM_NAME_GROUPS

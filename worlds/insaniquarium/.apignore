@@ -7,8 +7,7 @@ __pycache__/
 build_insaniquarium.*
 release_insaniquarium.*
 *.ps1
+patch_notes.md
 release
 release/**
-release_insaniquarium.*
-*.ps1
 

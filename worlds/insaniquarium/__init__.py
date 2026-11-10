@@ -75,7 +75,10 @@ class InsaniquariumWorld(World):
                 # ignore starting items
                 if name not in self.starting_item_names:
                     itempool.append(self.create_item(name))
-        
+        # add pet slots
+        for _ in range(self.options.pet_slot_items):
+            itempool.append(self.create_item("Pet Slot Upgrade"))
+
         # Check location count
         active_locations_count = len(self.multiworld.get_unfilled_locations(self.player))
         if len(itempool) > active_locations_count:
@@ -132,6 +135,8 @@ class InsaniquariumWorld(World):
             "challenge_mode_required": bool(self.options.challenge_mode_required),
             "upgrade_availability": int(self.options.upgrade_availability),
             "aliensanity": bool(self.options.aliensanity),
+            "starting_pet_slots": int(self.options.starting_pet_slots),
+            "bonus_pet_locations": int(self.options.bonus_pet_locations)
         }
 
     def generate_output(self, output_directory: str) -> None:

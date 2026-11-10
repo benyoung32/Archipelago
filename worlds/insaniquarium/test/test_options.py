@@ -24,7 +24,7 @@ class TestExcludeTimeTrials(InsaniquariumTestBase):
 
 class TestExcludeBonusPets(InsaniquariumTestBase):
     options = {
-        "include_bonus_pets": False,
+        "bonus_pet_locations": 0,
     }
 
     def test_bonus_pets_excluded(self) -> None:
@@ -36,6 +36,22 @@ class TestExcludeBonusPets(InsaniquariumTestBase):
         self.assertNotIn("Bonus Pet 4", loc_names)
         self.assertEqual(len(unfilled_locs), 73)
         self.assertEqual(len(self.multiworld.itempool), 73)
+
+
+class TestPartialBonusPets(InsaniquariumTestBase):
+    options = {
+        "bonus_pet_locations": 2,
+    }
+
+    def test_partial_bonus_pets(self) -> None:
+        unfilled_locs = self.multiworld.get_unfilled_locations(self.player)
+        loc_names = {loc.name for loc in unfilled_locs}
+        self.assertIn("Bonus Pet 1", loc_names)
+        self.assertIn("Bonus Pet 2", loc_names)
+        self.assertNotIn("Bonus Pet 3", loc_names)
+        self.assertNotIn("Bonus Pet 4", loc_names)
+        self.assertEqual(len(unfilled_locs), 75)
+        self.assertEqual(len(self.multiworld.itempool), 75)
 
 
 class TestTrapChance100(InsaniquariumTestBase):
@@ -55,7 +71,7 @@ class TestMinimalLocations(InsaniquariumTestBase):
     options = {
         "egg_pieces_per_level": 1,
         "include_time_trials": False,
-        "include_bonus_pets": False,
+        "bonus_pet_locations": 0,
     }
 
     def test_minimal_pool_and_locations(self) -> None:

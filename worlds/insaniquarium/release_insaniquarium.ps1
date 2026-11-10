@@ -25,6 +25,9 @@
 .PARAMETER Notes
     Inline string of release notes to use.
 
+.PARAMETER PatchNotesFile
+    Path to a markdown file containing changelog/patch notes to embed into release.md (defaults to worlds/insaniquarium/patch_notes.md).
+
 .PARAMETER Draft
     Create the release as an unpublished draft on GitHub.
 
@@ -66,6 +69,7 @@ param (
     [string]$Title,
     [string]$NotesFile,
     [string]$Notes,
+    [string]$PatchNotesFile,
     [switch]$Draft,
     [switch]$Prerelease,
     [switch]$SkipBuild,
@@ -93,6 +97,8 @@ $yamlSrcPath = Join-Path $worldDir "Insaniquarium.yaml"
 $buildScript = Join-Path $worldDir "build_insaniquarium.py"
 $buildOutputDir = Join-Path $repoRoot "build\apworlds"
 $apworldBuildPath = Join-Path $buildOutputDir "insaniquarium.apworld"
+$defaultPatchNotes = Join-Path $worldDir "patch_notes.md"
+$patchNotesPath = if ($PatchNotesFile) { $PatchNotesFile } else { $defaultPatchNotes }
 
 Write-Host "==================================================" -ForegroundColor Magenta
 Write-Host "  Insaniquarium Deluxe APWorld Release Tool       " -ForegroundColor Magenta
@@ -278,7 +284,9 @@ if (-not (Test-Path $stagingDir)) {
 $stagedApworld   = Join-Path $stagingDir "insaniquarium.apworld"
 $stagedYaml      = Join-Path $stagingDir "Insaniquarium.yaml"
 $stagedSourceZip = Join-Path $stagingDir "insaniquarium-source-v$Version.zip"
-$stagedNotes     = Join-Path $stagingDir "release_notes.md"
+$stagedReleaseMd = Join-Path $stagingDir "release.md"
+$stagedNotes     = $stagedReleaseMd
+$legacyNotesPath = Join-Path $stagingDir "release_notes.md"
 
 Copy-Item -Path $apworldBuildPath -Destination $stagedApworld -Force
 Copy-Item -Path $yamlSrcPath -Destination $stagedYaml -Force
@@ -326,8 +334,24 @@ finally {
 Log-Success "Staged source zip: $stagedSourceZip ($((Get-Item $stagedSourceZip).Length.ToString('N0')) bytes)"
 
 # -----------------------------------------------------------------------------
-# 7. Prepare Release Notes
+# 7. Prepare Release Notes & Load Patch Notes
 # -----------------------------------------------------------------------------
+$patchNotesBlock = ""
+if (Test-Path $patchNotesPath) {
+    Log-Info "Loading patch notes from $patchNotesPath..."
+    $rawPatchNotes = (Get-Content -Path $patchNotesPath -Raw -Encoding utf8).Trim()
+    if ($rawPatchNotes) {
+        $patchNotesBlock = @"
+
+---
+
+## What's New in v$Version
+
+$rawPatchNotes
+"@
+    }
+}
+
 if ($Notes) {
     $releaseNotesContent = $Notes
 }
@@ -344,6 +368,7 @@ Archipelago world integration for **Insaniquarium Deluxe** (PopCap / Steam).
 - **Archipelago**: [v$minApVersion or newer](https://github.com/ArchipelagoMW/Archipelago/releases)
 - **Game**: *Insaniquarium Deluxe* English PC release (Steam / PopCap)
 - **APFish**: [Latest Version](https://github.com/benyoung32/WinFish)
+$patchNotesBlock
 ---
 
 ## Installation & Setup
@@ -379,8 +404,9 @@ Archipelago world integration for **Insaniquarium Deluxe** (PopCap / Steam).
 "@
 }
 
-Set-Content -Path $stagedNotes -Value $releaseNotesContent -Encoding utf8
-Log-Success "Generated release notes at $stagedNotes"
+Set-Content -Path $stagedReleaseMd -Value $releaseNotesContent -Encoding utf8
+Set-Content -Path $legacyNotesPath -Value $releaseNotesContent -Encoding utf8
+Log-Success "Generated release notes at $stagedReleaseMd"
 
 # -----------------------------------------------------------------------------
 # 8. Publish via GitHub CLI
@@ -392,10 +418,10 @@ if ($LocalOnly) {
     Write-Host "  - insaniquarium.apworld"
     Write-Host "  - Insaniquarium.yaml"
     Write-Host "  - insaniquarium-source-v$Version.zip"
-    Write-Host "  - release_notes.md"
+    Write-Host "  - release.md"
     Write-Host ""
     Write-Host "To publish manually later, you can run:" -ForegroundColor DarkGray
-    Write-Host "  gh release create $Tag `"$stagedApworld`" `"$stagedYaml`" `"$stagedSourceZip`" --title `"$Title`" --notes-file `"$stagedNotes`" --target `"$Target`"" -ForegroundColor DarkGray
+    Write-Host "  gh release create $Tag `"$stagedApworld`" `"$stagedYaml`" `"$stagedSourceZip`" --title `"$Title`" --notes-file `"$stagedReleaseMd`" --target `"$Target`"" -ForegroundColor DarkGray
     exit 0
 }
 
