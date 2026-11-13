@@ -12,7 +12,7 @@ WORLD_VERSION = "world_version"
 from .data import item_data, location_data
 from .container import InsaniquariumContainer
 from .data.item_data import InsaniquariumItem, ITEM_DATA, InsaniquariumItemData
-from .options import InsaniquariumOptions, StartingTank
+from .options import InsaniquariumOptions, StartingTank, insaniquarium_option_groups
 from .regions import regions
 from .rules import InsaniquariumRules
 
@@ -22,6 +22,7 @@ class InsaniquariumWorld(World):
 
     game = GAME_NAME
     options_dataclass = InsaniquariumOptions
+    options_group = insaniquarium_option_groups
     options: InsaniquariumOptions
 
     item_name_to_id = item_data.item_name_to_id

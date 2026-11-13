@@ -1,5 +1,5 @@
 from . import InsaniquariumTestBase
-from ..item_data import (
+from ..data.item_data import (
     TANK_2_UNLOCK,
     TANK_3_UNLOCK,
     TANK_4_UNLOCK,

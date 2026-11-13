@@ -1,5 +1,5 @@
 from . import InsaniquariumTestBase
-from ..item_data import (
+from ..data.item_data import (
     STARTING_MONEY,
     TRAP_ALIEN_ATTACK,
     TRAP_FAMINE,

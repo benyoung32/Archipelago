@@ -383,5 +383,40 @@
     "code_name": "BONUS_PET_4",
     "name": "Bonus Pet 4",
     "region": "Bonus Pets"
+  },
+  {
+    "code_name": "DEFEAT_SYLVESTER",
+    "name": "Defeat Sylvester",
+    "region": "Tank 1"
+  },
+  {
+    "code_name": "DEFEAT_BALROG",
+    "name": "Defeat Balrog",
+    "region": "Tank 1"
+  },
+  {
+    "code_name": "DEFEAT_GUS",
+    "name": "Defeat Gus",
+    "region": "Tank 2"
+  },
+  {
+    "code_name": "DEFEAT_DESTRUCTOR",
+    "name": "Defeat Destructor",
+    "region": "Tank 2"
+  },
+  {
+    "code_name": "DEFEAT_PSYCHOSQUID",
+    "name": "Defeat Psychosquid",
+    "region": "Tank 3"
+  },
+  {
+    "code_name": "DEFEAT_ULYSSES",
+    "name": "Defeat Ulysses",
+    "region": "Tank 3"
+  },
+  {
+    "code_name": "DEFEAT_BILATERUS",
+    "name": "Defeat Bilaterus",
+    "region": "Tank 4"
   }
 ]

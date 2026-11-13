@@ -9,8 +9,8 @@ from Options import (
     Range,
     StartInventoryPool,
     Toggle,
+    OptionGroup,
 )
-
 
 class StartingTank(Choice):
     """Choose which tank you start with.
@@ -59,18 +59,18 @@ class EggPiecesPerLevel(Range):
     range_end = 3
     default = 3
 
-"Completing all 4 tanks is always a victory condition. Add extra conditions below"
+"Completing all 4 tanks is always a victory condition. Add extra conditions below."
 
 class CyraxRequired(DefaultOnToggle):
-    "Control if cyrax is necessary to win"
+    "Control if cyrax is necessary to win."
     display_name = "Cyrax Required"
 
 class TimeTrialRequired(Toggle):
-    "Control if time trials are necessary to win"
+    "Control if time trials are necessary to win."
     display_name = "Time Trials Required"
     default = False
 class ChallengeModeRequired(Toggle):
-    "Control if challenge mode is necessary to win"
+    "Control if challenge mode is necessary to win."
     display_name = "Challenge Mode Required"
     default = False    
 
@@ -128,18 +128,18 @@ class IncludeChallengeMode(DefaultOnToggle):
     NOTE: This option is overwritten by 'Challenge Mode Required' if enabled."""
     display_name = "Include Challenge Mode"
 
+class Aliensanity(Toggle):
+    """Control if defeating aliens for the first time is a check"""
+    display_name = "Aliensanity"
+    default = False
+
 class TrapChance(Range):
     """Percentage chance to replace non-progression filler items with traps."""
     display_name = "Trap Chance"
     range_start = 0
     range_end = 100
-    default = 0
+    default = 10
 
-
-class Aliensanity(Toggle):
-    """Control if defeating aliens for the first time is a check"""
-    display_name = "Aliensanity"
-    default = False
 
 # TODO: alien randomzier
 # each level chooses from the alien pool randomly (maybe there needs to be a difficulty rating)
@@ -180,3 +180,27 @@ class InsaniquariumOptions(PerGameCommonOptions):
     start_inventory_from_pool: StartInventoryPool
     starting_pet_slots: StartingPetSlots
     pet_slot_items: PetSlotItems
+
+insaniquarium_option_groups = [
+    OptionGroup("Victory Conditions", [
+        CyraxRequired,
+        TimeTrialRequired,
+        ChallengeModeRequired,
+    ]),
+    OptionGroup("Included Locations", [
+        IncludeTimeTrials,
+        IncludeChallengeMode,
+        BonusPetLocations,
+        Aliensanity,
+    ]),
+    OptionGroup("Bonus Items", [ 
+        BonusShellsWeight,
+        BonusMoneyWeight,
+    ]),
+    OptionGroup("Traps", [
+        TrapChance,
+        AlienAttackTrapWeight,
+        FamineTrapWeight,
+    ]),
+]
+

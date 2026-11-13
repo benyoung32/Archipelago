@@ -16,29 +16,35 @@ if TYPE_CHECKING:
 
 def is_location_enabled(world: InsaniquariumWorld, loc: InsaniquariumLocationData) -> bool:
     name = loc.location_name
+    # included egg pieces
     pieces = int(getattr(world.options, "egg_pieces_per_level", 3))
 
-    if "Egg Piece 2" in name and pieces < 3:
+    if "Egg Piece 2" in name and pieces == 2:
         return False
-    if "Egg Piece 1" in name and pieces < 2:
+    if "Egg Piece 1" in name and pieces == 1:
         return False
-    # if time trials or challenge mode are required to win, include their locations
+    
+    # include time trial and challenge mode 
+    # if time trials or challenge mode are required to win, always include their locations
     if name.startswith("Time Trial ") and not bool(getattr(world.options, "include_time_trials", True)):
         return False
 
     if name.startswith("Challenge Mode ") and not bool(getattr(world.options, "include_challenge_mode", True)):
         return False
-
-    if name.startswith("Bonus Pet "):
-        bonus_pet_opt = getattr(world.options, "bonus_pet_locations")
     
+    # include bonus pet locations
+    if name.startswith("Bonus Pet "):
+        bonus_pet_opt = getattr(world.options, "bonus_pet_locations")    
         try:
             pet_index = int(name.rsplit(" ", 1)[-1])
         except ValueError:
             pet_index = 1
         if pet_index > int(bonus_pet_opt.value):
             return False
-
+    
+    # aliensanity 
+    if name.startswith("Defeat ") and bool(getattr(world.options, "aliensanity", False)):
+        return False
     return True
 
 def create_regions(world: InsaniquariumWorld) -> None:

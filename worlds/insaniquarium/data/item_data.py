@@ -112,7 +112,7 @@ ITEM_DATA: dict[str, InsaniquariumItemData] = {
     "Tank 4 Unlock": InsaniquariumItemData(IC.progression, 1, 4, "Unlock"),
     "Food Quality Upgrade": InsaniquariumItemData(IC.progression, 2, 100, "Upgrade"),
     "Food Quantity Upgrade": InsaniquariumItemData(IC.useful, 8, 101, "Upgrade"),
-    "Pet Slot Upgrade": InsaniquariumItemData(IC.progression, 3, 102, "Upgrade"),
+    "Pet Slot Upgrade": InsaniquariumItemData(IC.progression, 0, 102, "Upgrade"),
     "Starting Money +100": InsaniquariumItemData(IC.filler, 0, 103, "Bonus"),
     "Progressive Weapon Upgrade": InsaniquariumItemData(IC.progression, 10, 104, "Upgrade"),
     "Bonus Shells": InsaniquariumItemData(IC.filler, 0, 105, "Bonus"),
