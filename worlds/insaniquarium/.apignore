@@ -1,5 +1,4 @@
 APDefinitions.h
-generate_data.py
 test/
 __pycache__/
 *.pyc

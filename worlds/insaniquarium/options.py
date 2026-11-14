@@ -26,7 +26,7 @@ class StartingTank(Choice):
 
 class StartingPetSlots(Range):
     """
-    Controls how many pet slots to start with.
+    Choose how many pet slots to start with.
     """
     display_name = "Starting Pet Slots"
     range_start = 0
@@ -35,7 +35,7 @@ class StartingPetSlots(Range):
 
 class PetSlotItems(Range):
     """
-    Controls how many unlockable pet slots are available as items.
+    Choose how many unlockable pet slots are available as items.
     Combined with the above option, the total number of pet slots in the game will be
     Starting Pet Slots + Pet Slot Items 
     """
@@ -50,7 +50,7 @@ class PetSlotItems(Range):
 # 2 - one check when the egg is unlocked per level (plus above)
 
 class EggPiecesPerLevel(Range):
-    """Controls how many egg purchases in each level provide an Archipelago check.
+    """Choose how many egg purchases in each level provide an Archipelago check.
     1: Only the final egg piece is a check (20 level checks).
     2: Egg pieces 1 and 3 are checks (40 level checks).
     3: All 3 egg pieces in every level are checks (60 level checks)."""
@@ -62,21 +62,21 @@ class EggPiecesPerLevel(Range):
 "Completing all 4 tanks is always a victory condition. Add extra conditions below."
 
 class CyraxRequired(DefaultOnToggle):
-    "Control if cyrax is necessary to win."
+    "Choose if cyrax is necessary to win."
     display_name = "Cyrax Required"
 
 class TimeTrialRequired(Toggle):
-    "Control if time trials are necessary to win."
+    "Choose if time trials are necessary to win."
     display_name = "Time Trials Required"
     default = False
 class ChallengeModeRequired(Toggle):
-    "Control if challenge mode is necessary to win."
+    "Choose if challenge mode is necessary to win."
     display_name = "Challenge Mode Required"
     default = False    
 
 # TODO: potentially add virtual tank win condition
 class BonusPetLocations(Range):
-    """Controls how many bonus pets are location checks (0 to 4).
+    """Choose how many bonus pets are location checks (0 to 4).
     0: Disables bonus pet checks.
     1-4: Bonus Pet 1 through the selected number are location checks."""
     display_name = "Bonus Pet Locations"
@@ -86,7 +86,7 @@ class BonusPetLocations(Range):
 
 
 class UpgradeAvailbility(Choice):
-    """Controls when received upgrade items are available during each level
+    """Choose when received upgrade items are available during each level
     0: Upgrades are immediately applied once recevied
     1: Upgrades are available for free once received
     2: Upgrades are available for normal price once received"""
@@ -129,7 +129,7 @@ class IncludeChallengeMode(DefaultOnToggle):
     display_name = "Include Challenge Mode"
 
 class Aliensanity(Toggle):
-    """Control if defeating aliens for the first time is a check"""
+    """Choose if defeating aliens for the first time is a check"""
     display_name = "Aliensanity"
     default = True
 
@@ -142,7 +142,7 @@ class TrapChance(Range):
 
 
 # TODO: alien randomzier
-# each level chooses from the alien pool randomly (maybe there needs to be a difficulty rating)
+# each level Choose from the alien pool randomly (maybe there needs to be a difficulty rating)
 
 class AlienAttackTrapWeight(Range):
     """Relative weight of Alien Attack Traps when a trap is selected."""
@@ -188,6 +188,7 @@ insaniquarium_option_groups = [
         ChallengeModeRequired,
     ]),
     OptionGroup("Included Locations", [
+        EggPiecesPerLevel,
         IncludeTimeTrials,
         IncludeChallengeMode,
         BonusPetLocations,

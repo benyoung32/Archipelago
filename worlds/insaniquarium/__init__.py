@@ -27,7 +27,7 @@ class InsaniquariumWebWorld(WebWorld):
             "English",
             "setup_en.md",
             "setup/en",
-            ["dmwever", "benyoung32"],
+            ["benyoung32", "dmwever"],
         )
     ]
 
