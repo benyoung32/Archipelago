@@ -14,12 +14,12 @@ class TestExcludeTimeTrials(InsaniquariumTestBase):
     def test_time_trials_excluded(self) -> None:
         unfilled_locs = self.multiworld.get_unfilled_locations(self.player)
         loc_names = {loc.name for loc in unfilled_locs}
-        self.assertNotIn("Time Trial 1", loc_names)
-        self.assertNotIn("Time Trial 2", loc_names)
-        self.assertNotIn("Time Trial 3", loc_names)
-        self.assertNotIn("Time Trial 4", loc_names)
-        self.assertEqual(len(unfilled_locs), 73)
-        self.assertEqual(len(self.multiworld.itempool), 73)
+        self.assertNotIn("Time Trial 1 Complete", loc_names)
+        self.assertNotIn("Time Trial 2 Complete", loc_names)
+        self.assertNotIn("Time Trial 3 Complete", loc_names)
+        self.assertNotIn("Time Trial 4 Complete", loc_names)
+        self.assertEqual(len(unfilled_locs), 76)
+        self.assertEqual(len(self.multiworld.itempool), 76)
 
 
 class TestExcludeBonusPets(InsaniquariumTestBase):
@@ -34,8 +34,8 @@ class TestExcludeBonusPets(InsaniquariumTestBase):
         self.assertNotIn("Bonus Pet 2", loc_names)
         self.assertNotIn("Bonus Pet 3", loc_names)
         self.assertNotIn("Bonus Pet 4", loc_names)
-        self.assertEqual(len(unfilled_locs), 73)
-        self.assertEqual(len(self.multiworld.itempool), 73)
+        self.assertEqual(len(unfilled_locs), 80)
+        self.assertEqual(len(self.multiworld.itempool), 80)
 
 
 class TestPartialBonusPets(InsaniquariumTestBase):
@@ -50,8 +50,28 @@ class TestPartialBonusPets(InsaniquariumTestBase):
         self.assertIn("Bonus Pet 2", loc_names)
         self.assertNotIn("Bonus Pet 3", loc_names)
         self.assertNotIn("Bonus Pet 4", loc_names)
-        self.assertEqual(len(unfilled_locs), 75)
-        self.assertEqual(len(self.multiworld.itempool), 75)
+        self.assertEqual(len(unfilled_locs), 82)
+        self.assertEqual(len(self.multiworld.itempool), 82)
+
+
+class TestAliensanity(InsaniquariumTestBase):
+    options = {
+        "aliensanity": False,
+    }
+
+    def test_aliensanity_excluded_when_false(self) -> None:
+        unfilled_locs = self.multiworld.get_unfilled_locations(self.player)
+        loc_names = {loc.name for loc in unfilled_locs}
+        self.assertNotIn("Defeat Sylvester", loc_names)
+        self.assertNotIn("Defeat Balrog", loc_names)
+        self.assertNotIn("Defeat Gus", loc_names)
+        self.assertNotIn("Defeat Destructor", loc_names)
+        self.assertNotIn("Defeat Psychosquid", loc_names)
+        self.assertNotIn("Defeat Ulysses", loc_names)
+        self.assertNotIn("Defeat Bilaterus", loc_names)
+        # 80 default - 7 alien checks = 73 locations
+        self.assertEqual(len(unfilled_locs), 73)
+        self.assertEqual(len(self.multiworld.itempool), 73)
 
 
 class TestTrapChance100(InsaniquariumTestBase):
@@ -68,15 +88,16 @@ class TestTrapChance100(InsaniquariumTestBase):
 
 
 class TestMinimalLocations(InsaniquariumTestBase):
+    auto_construct = False
     options = {
         "egg_pieces_per_level": 1,
         "include_time_trials": False,
         "bonus_pet_locations": 0,
+        "aliensanity": False,
     }
 
-    def test_minimal_pool_and_locations(self) -> None:
-        unfilled_locs = self.multiworld.get_unfilled_locations(self.player)
-        # 20 egg checks + 4 tank completes + 4 challenge completes + 1 Cyrax = 29 locations
-        self.assertEqual(len(unfilled_locs), 29)
-        self.assertEqual(len(self.multiworld.itempool), 29)
+    def test_too_few_locations_raises_option_error(self) -> None:
+        from Options import OptionError
+        with self.assertRaises(OptionError):
+            self.world_setup()
 

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Any
 
-from BaseClasses import Item, Location
+from BaseClasses import Item, Location, Tutorial
 from Options import OptionError
-from worlds.AutoWorld import World
+from worlds.AutoWorld import WebWorld, World
 
 GAME_NAME = "Insaniquarium Deluxe"
 WORLD_VERSION = "world_version"
@@ -17,13 +17,28 @@ from .regions import regions
 from .rules import InsaniquariumRules
 
 
+class InsaniquariumWebWorld(WebWorld):
+    theme = "ocean"
+    option_groups = insaniquarium_option_groups
+    tutorials = [
+        Tutorial(
+            "Multiworld Setup Guide",
+            "A guide to playing Insaniquarium Deluxe with Archipelago.",
+            "English",
+            "setup_en.md",
+            "setup/en",
+            ["dmwever", "benyoung32"],
+        )
+    ]
+
+
 class InsaniquariumWorld(World):
     """Insaniquarium Deluxe: feed your fish, fight off aliens, collect the pets."""
 
     game = GAME_NAME
     options_dataclass = InsaniquariumOptions
-    options_group = insaniquarium_option_groups
     options: InsaniquariumOptions
+    web = InsaniquariumWebWorld()
 
     item_name_to_id = item_data.item_name_to_id
     location_name_to_id = location_data.location_name_to_id
@@ -51,7 +66,7 @@ class InsaniquariumWorld(World):
         else:
             self.starting_tank_unlock = self.random.choice(list(tank_map.values()))
         
-        self.starting_item_names.append(self.starting_tank_unlock)
+        self.starting_item_names = [self.starting_tank_unlock]
 
         self.multiworld.push_precollected(self.create_item(self.starting_tank_unlock))
 

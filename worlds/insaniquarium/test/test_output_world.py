@@ -99,8 +99,8 @@ class TestOutputWorldArchive(InsaniquariumTestBase):
             header, locations, item_counts, starting_items = parse_spoiler_text(spoiler_content)
 
             # 6. Verify location count:
-            # 60 egg pieces (20 * 3) + 4 tanks + 1 Cyrax + 4 time trials + 4 challenges + 0 bonus pets = 73
-            expected_locations = 73
+            # 60 egg pieces (20 * 3) + 4 tanks + 1 Cyrax + 4 time trials + 4 challenges + 0 bonus pets + 7 aliens = 80
+            expected_locations = 80
             self.assertEqual(len(locations), expected_locations,
                              f"Expected {expected_locations} locations in spoiler, found {len(locations)}")
 

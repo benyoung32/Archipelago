@@ -47,7 +47,7 @@ class TestInsaniquariumContainer(InsaniquariumTestBase):
                 # Check slot data
                 slot_data = json.loads(zf.read("slot_data.json"))
                 self.assertIn("starting_tank_unlock", slot_data)
-                self.assertEqual(slot_data["starting_tank_unlock"], "Tank 2")
+                self.assertEqual(slot_data["starting_tank_unlock"], "Tank 2 Unlock")
 
     def test_container_with_mock_world(self) -> None:
         """Verify InsaniquariumContainer works when given a mock world with multiworld attributes."""

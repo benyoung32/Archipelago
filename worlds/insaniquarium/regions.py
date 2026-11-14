@@ -19,17 +19,19 @@ def is_location_enabled(world: InsaniquariumWorld, loc: InsaniquariumLocationDat
     # included egg pieces
     pieces = int(getattr(world.options, "egg_pieces_per_level", 3))
 
-    if "Egg Piece 2" in name and pieces == 2:
+    if "Egg Piece 2" in name and pieces < 3:
         return False
-    if "Egg Piece 1" in name and pieces == 1:
+    if "Egg Piece 1" in name and pieces < 2:
         return False
     
     # include time trial and challenge mode 
     # if time trials or challenge mode are required to win, always include their locations
-    if name.startswith("Time Trial ") and not bool(getattr(world.options, "include_time_trials", True)):
+    time_trials_enabled = bool(getattr(world.options, "include_time_trials", True)) or bool(getattr(world.options, "time_trial_required", False))
+    if name.startswith("Time Trial ") and not time_trials_enabled:
         return False
 
-    if name.startswith("Challenge Mode ") and not bool(getattr(world.options, "include_challenge_mode", True)):
+    challenge_enabled = bool(getattr(world.options, "include_challenge_mode", True)) or bool(getattr(world.options, "challenge_mode_required", False))
+    if (name.startswith("Challenge ") or name.startswith("Challenge Mode ")) and not challenge_enabled:
         return False
     
     # include bonus pet locations
@@ -43,7 +45,7 @@ def is_location_enabled(world: InsaniquariumWorld, loc: InsaniquariumLocationDat
             return False
     
     # aliensanity 
-    if name.startswith("Defeat ") and bool(getattr(world.options, "aliensanity", False)):
+    if name.startswith("Defeat ") and not bool(getattr(world.options, "aliensanity", True)):
         return False
     return True
 

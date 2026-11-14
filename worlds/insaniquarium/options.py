@@ -14,10 +14,10 @@ from Options import (
 
 class StartingTank(Choice):
     """Choose which tank you start with.
-    Random: A random tank unlock (Tank 1 through 4) is given as starting inventory.
+    Randomized: A random tank unlock (Tank 1 through 4) is given as starting inventory.
     Tank 1 - 4: Begin with the selected tank unlocked."""
     display_name = "Starting Tank"
-    option_random = 0
+    option_randomized = 0
     option_tank_1 = 1
     option_tank_2 = 2
     option_tank_3 = 3
@@ -131,7 +131,7 @@ class IncludeChallengeMode(DefaultOnToggle):
 class Aliensanity(Toggle):
     """Control if defeating aliens for the first time is a check"""
     display_name = "Aliensanity"
-    default = False
+    default = True
 
 class TrapChance(Range):
     """Percentage chance to replace non-progression filler items with traps."""

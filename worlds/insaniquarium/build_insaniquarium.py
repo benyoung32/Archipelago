@@ -107,7 +107,7 @@ def build_apworld(world_dir: pathlib.Path, output_path: pathlib.Path) -> pathlib
     return output_path
 
 
-def swap_into_launcher(apworld_path: pathlib.Path, ap_dir: pathlib.Path, yaml_src: pathlib.Path) -> None:
+def swap_into_launcher(apworld_path: pathlib.Path, ap_dir: pathlib.Path) -> None:
     log(f"Swapping APWorld into Archipelago Launcher at {ap_dir}...")
 
     custom_worlds_dir = ap_dir / "custom_worlds"
@@ -117,19 +117,72 @@ def swap_into_launcher(apworld_path: pathlib.Path, ap_dir: pathlib.Path, yaml_sr
     shutil.copy2(apworld_path, dest_apworld)
     log_success(f"Installed to {dest_apworld}")
 
-    # Copy template YAML into Templates folder
-    templates_dir = ap_dir / "Players" / "Templates"
-    if templates_dir.is_dir() and yaml_src.is_file():
-        dest_template = templates_dir / "Insaniquarium Deluxe.yaml"
-        shutil.copy2(yaml_src, dest_template)
-        log_success(f"Updated template YAML at {dest_template}")
+
+def generate_templates(ap_dir: pathlib.Path, repo_root: pathlib.Path, world_dir: pathlib.Path) -> pathlib.Path:
+    log("Generating template options using Options.generate_yaml_templates...")
+
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
+
+    import tempfile
+    from Options import generate_yaml_templates
+    from worlds.AutoWorld import AutoWorldRegister
+
+    game_name = "Insaniquarium Deluxe"
+    if game_name not in AutoWorldRegister.world_types:
+        import importlib
+        importlib.import_module("worlds.insaniquarium")
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_path = pathlib.Path(temp_dir)
+
+        # Restrict to Insaniquarium Deluxe so other unconfigured/broken worlds don't block generation
+        old_world_types = AutoWorldRegister.world_types
+        if game_name in AutoWorldRegister.world_types:
+            AutoWorldRegister.world_types = {game_name: old_world_types[game_name]}
+        try:
+            generate_yaml_templates(temp_path, generate_hidden=True)
+        finally:
+            AutoWorldRegister.world_types = old_world_types
+
+        generated_file = temp_path / f"{game_name}.yaml"
+        if not generated_file.is_file():
+            raise FileNotFoundError(
+                f"Expected template '{game_name}.yaml' was not generated in {temp_path}."
+            )
+
+        # 1. Copy into Archipelago Templates directory
+        templates_dir = ap_dir / "Players" / "Templates"
+        templates_dir.mkdir(parents=True, exist_ok=True)
+        dest_template = templates_dir / f"{game_name}.yaml"
+        shutil.copy2(generated_file, dest_template)
+        log_success(f"Updated template options in Archipelago at {dest_template}")
+
+        # 2. Copy into workspace
+        workspace_yaml = world_dir / "Insaniquarium.yaml"
+        shutil.copy2(generated_file, workspace_yaml)
+        log_success(f"Updated workspace template at {workspace_yaml}")
+
+        # 3. Copy any generated presets
+        temp_presets = temp_path / "Presets"
+        if temp_presets.is_dir():
+            ap_presets = templates_dir / "Presets"
+            workspace_presets = world_dir / "Presets"
+            for preset in temp_presets.glob(f"{game_name} - *.yaml"):
+                ap_presets.mkdir(parents=True, exist_ok=True)
+                workspace_presets.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(preset, ap_presets / preset.name)
+                shutil.copy2(preset, workspace_presets / preset.name)
+                log_success(f"Synchronized preset: {preset.name}")
+
+    return dest_template
 
 
-def run_generation(ap_dir: pathlib.Path, yaml_src: pathlib.Path, repo_root: pathlib.Path) -> None:
-    log("Running Archipelago generation with template YAML...")
+def run_generation(ap_dir: pathlib.Path, yaml_to_use: pathlib.Path, repo_root: pathlib.Path) -> None:
+    log(f"Running Archipelago generation with {yaml_to_use.name}...")
 
-    if not yaml_src.is_file():
-        raise FileNotFoundError(f"Template YAML not found: {yaml_src}")
+    if not yaml_to_use.is_file():
+        raise FileNotFoundError(f"Player YAML not found: {yaml_to_use}")
 
     # Prepare isolated generation folder for solo roll
     solo_dir = ap_dir / "Players" / "_solo_insaniquarium"
@@ -138,7 +191,7 @@ def run_generation(ap_dir: pathlib.Path, yaml_src: pathlib.Path, repo_root: path
     solo_dir.mkdir(parents=True, exist_ok=True)
 
     dest_yaml = solo_dir / "Insaniquarium.yaml"
-    shutil.copy2(yaml_src, dest_yaml)
+    shutil.copy2(yaml_to_use, dest_yaml)
 
     generate_exe = ap_dir / "ArchipelagoGenerate.exe"
     output_dir = ap_dir / "output"
@@ -202,12 +255,12 @@ def main() -> None:
         "--yaml",
         type=pathlib.Path,
         default=None,
-        help="Path to player YAML to generate with (default: Insaniquarium.yaml in world folder)",
+        help="Optional path to custom player YAML to generate with (default: auto-generated template)",
     )
     parser.add_argument(
         "--skip-generate",
         action="store_true",
-        help="Build and swap .apworld into Launcher without running generation.",
+        help="Build, deploy, and generate templates without running seed generation.",
     )
 
     args = parser.parse_args()
@@ -216,7 +269,6 @@ def main() -> None:
     world_dir = pathlib.Path(__file__).resolve().parent
     repo_root = world_dir.parent.parent
 
-    yaml_src = args.yaml if args.yaml else (world_dir / "Insaniquarium.yaml")
     build_output = repo_root / "build" / "apworlds" / "insaniquarium.apworld"
 
     print("\033[1;36m==================================================\033[0m")
@@ -227,11 +279,15 @@ def main() -> None:
     build_apworld(world_dir, build_output)
 
     # 2. Swap into Launcher
-    swap_into_launcher(build_output, args.ap_dir, yaml_src)
+    swap_into_launcher(build_output, args.ap_dir)
 
-    # 3. Run Generation
+    # 3. Auto-generate template options using Options.generate_yaml_templates and sync
+    generated_template = generate_templates(args.ap_dir, repo_root, world_dir)
+
+    # 4. Run Generation
     if not args.skip_generate:
-        run_generation(args.ap_dir, yaml_src, repo_root)
+        yaml_to_use = args.yaml if args.yaml else generated_template
+        run_generation(args.ap_dir, yaml_to_use, repo_root)
 
     print("\033[1;32m==================================================\033[0m")
     print("\033[1;32m   Completed successfully!          \033[0m")
