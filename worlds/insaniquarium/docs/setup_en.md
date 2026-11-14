@@ -2,29 +2,30 @@
 
 ## Required Software
 
-- **Insaniquarium Deluxe** (PC version).
-- **Archipelago**: Version `0.6.7` or newer.
-- [**Insaniquarium Deluxe Archipelago Client**](https://github.com/benyoung32/WinFish)
+- **Insaniquarium Deluxe** (Disk or Steam version)
+- **Archipelago**: Version `0.6.7` or newer
+- **Insaniquarium Client**: Download from [Github repository](https://github.com/benyoung32/WinFish) or provided `winfish-source` folder
 
 ## Installation
 
-1. Download the modified [Insaniquarium Deluxe Decompilation](https://github.com/benyoung32/WinFish) forked from the WinFish project.
-2. Copy the asset folders (data, properties, fishsongs...) and `bass.dll` from your copy of Insaniquarium Deluxe to the decompilation's root directory.
+1. Download and install the provided `insaniquarium.apworld` from the file below
+2. Download the modified client from the files below or from the [Github repository](https://github.com/benyoung32/WinFish)
+3. Copy the data asset folders (data, properties, fishsongs...) and `bass.dll` from your copy of Insaniquarium Deluxe into the decompilation's root directory
 
-## Generating a Multiworld Game
+## Generating
 
-1. Obtain a player configuration file (`Insaniquarium.yaml`):
-   - You can configure and export your YAML using the [Insaniquarium Deluxe WebHost Options Page](../player-options).
-   - Alternatively, generate template YAMLs through the Archipelago Launcher (**Generate Template Options**) or use `Players/Templates/Insaniquarium Deluxe.yaml`.
-2. When the generation completes, you will receive an `.apinsani` patch file.
+1. Download `Insaniquarium Deluxe.yaml`
+2. Edit your desired options, save, and move the yaml file in your Players folder
+3. Generate using the Archipelago Launcher interface
+4. Inside the AP output file you will receive an `.apinsani` patch file containing the information needed by the client
 
-## Connecting and Playing
+## Playing
 
-1. Launch **Insaniquarium Deluxe**.
-2. From the main menu, go to the profile selection screen.
-3. Click the **Import** button.
-4. Select your generated `.apinsani` patch file.
+1. Launch **Insaniquarium Deluxe.exe** from inside the `winfish-source` after copying in the necessary asset folders
+2. From the main menu, go to the profile selection screen
+3. Click the **Import** button
+4. Select your generated `.apinsani` patch file
 5. Enter your Archipelago connection information:
-   - **Server / Host**: Host address and port (e.g., `archipelago.gg:38281` or `localhost:38281`).
+   - **Server / Host**: Host address and port (e.g., `archipelago.gg:38281` or `localhost:38281`)
    - **Slot Name**: The player name specified in your configuration YAML (`name: Player1`).
-   - **Password**: Password for the room (leave blank if none).
+   - **Password**: Password for the room (leave blank if none)

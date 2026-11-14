@@ -107,6 +107,7 @@ $buildOutputDir = Join-Path $repoRoot "build\apworlds"
 $apworldBuildPath = Join-Path $buildOutputDir "insaniquarium.apworld"
 $defaultPatchNotes = Join-Path $worldDir "patch_notes.md"
 $patchNotesPath = if ($PatchNotesFile) { $PatchNotesFile } else { $defaultPatchNotes }
+$setupDocPath = Join-Path $worldDir "docs\setup_en.md"
 
 function Find-WinFishDir {
     param ([string]$UserPath)
@@ -349,240 +350,240 @@ else {
     Log-Info "Skipping build step (-SkipBuild specified). Using existing $apworldBuildPath"
 }
 
-    if (-not (Test-Path $apworldBuildPath)) {
-        Log-Error "APWorld package not found at $apworldBuildPath. Run without -SkipBuild."
-        exit 1
+if (-not (Test-Path $apworldBuildPath)) {
+    Log-Error "APWorld package not found at $apworldBuildPath. Run without -SkipBuild."
+    exit 1
+}
+
+if (-not (Test-Path $yamlSrcPath)) {
+    Log-Error "Options YAML template not found at $yamlSrcPath"
+    exit 1
+}
+
+# -----------------------------------------------------------------------------
+# 6. Stage Release Assets
+# -----------------------------------------------------------------------------
+$stagingDir = Join-Path $repoRoot "build\releases\insaniquarium-v$Version"
+if (-not (Test-Path $stagingDir)) {
+    New-Item -ItemType Directory -Path $stagingDir -Force | Out-Null
+}
+
+$stagedApworld = Join-Path $stagingDir "insaniquarium.apworld"
+$stagedYaml = Join-Path $stagingDir "Insaniquarium.yaml"
+$stagedSourceZip = Join-Path $stagingDir "insaniquarium-source-v$Version.zip"
+$stagedWinFishZip = Join-Path $stagingDir "winfish-source-v$Version.zip"
+$stagedReleaseNotes = Join-Path $stagingDir "release_notes.md"
+$stagedNotes = $stagedReleaseNotes
+
+# Clean up obsolete release.md if present from prior builds
+$obsoleteReleaseMd = Join-Path $stagingDir "release.md"
+if (Test-Path $obsoleteReleaseMd) {
+    Remove-Item -Path $obsoleteReleaseMd -Force
+}
+
+Copy-Item -Path $apworldBuildPath -Destination $stagedApworld -Force
+Copy-Item -Path $yamlSrcPath -Destination $stagedYaml -Force
+
+Log-Success "Staged apworld:    $stagedApworld ($((Get-Item $stagedApworld).Length.ToString('N0')) bytes)"
+Log-Success "Staged yaml:       $stagedYaml"
+
+# Build source code zip archive (following .apignore)
+Log-Info "Creating source code zip archive ($((Split-Path $stagedSourceZip -Leaf)))..."
+Add-Type -AssemblyName System.IO.Compression
+Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+if (Test-Path $stagedSourceZip) {
+    Remove-Item -Path $stagedSourceZip -Force
+}
+
+$apignorePath = Join-Path $worldDir ".apignore"
+$apIgnorePatterns = @(
+    '__pycache__',
+    '*.pyc',
+    '.git*',
+    '.apignore'
+)
+if (Test-Path $apignorePath) {
+    $rawApignore = Get-Content -Path $apignorePath -Encoding utf8
+    foreach ($line in $rawApignore) {
+        $t = $line.Trim()
+        if ($t -and -not $t.StartsWith('#')) {
+            $apIgnorePatterns += $t.TrimEnd('/')
+        }
     }
+}
 
-    if (-not (Test-Path $yamlSrcPath)) {
-        Log-Error "Options YAML template not found at $yamlSrcPath"
-        exit 1
-    }
-
-    # -----------------------------------------------------------------------------
-    # 6. Stage Release Assets
-    # -----------------------------------------------------------------------------
-    $stagingDir = Join-Path $repoRoot "build\releases\insaniquarium-v$Version"
-    if (-not (Test-Path $stagingDir)) {
-        New-Item -ItemType Directory -Path $stagingDir -Force | Out-Null
-    }
-
-    $stagedApworld = Join-Path $stagingDir "insaniquarium.apworld"
-    $stagedYaml = Join-Path $stagingDir "Insaniquarium.yaml"
-    $stagedSourceZip = Join-Path $stagingDir "insaniquarium-source-v$Version.zip"
-    $stagedWinFishZip = Join-Path $stagingDir "winfish-source-v$Version.zip"
-    $stagedReleaseNotes = Join-Path $stagingDir "release_notes.md"
-    $stagedNotes        = $stagedReleaseNotes
-
-    # Clean up obsolete release.md if present from prior builds
-    $obsoleteReleaseMd = Join-Path $stagingDir "release.md"
-    if (Test-Path $obsoleteReleaseMd) {
-        Remove-Item -Path $obsoleteReleaseMd -Force
-    }
-
-    Copy-Item -Path $apworldBuildPath -Destination $stagedApworld -Force
-    Copy-Item -Path $yamlSrcPath -Destination $stagedYaml -Force
-
-    Log-Success "Staged apworld:    $stagedApworld ($((Get-Item $stagedApworld).Length.ToString('N0')) bytes)"
-    Log-Success "Staged yaml:       $stagedYaml"
-
-    # Build source code zip archive (following .apignore)
-    Log-Info "Creating source code zip archive ($((Split-Path $stagedSourceZip -Leaf)))..."
-    Add-Type -AssemblyName System.IO.Compression
-    Add-Type -AssemblyName System.IO.Compression.FileSystem
-
-    if (Test-Path $stagedSourceZip) {
-        Remove-Item -Path $stagedSourceZip -Force
-    }
-
-    $apignorePath = Join-Path $worldDir ".apignore"
-    $apIgnorePatterns = @(
-        '__pycache__',
-        '*.pyc',
-        '.git*',
-        '.apignore'
+function Test-ApIgnored {
+    param (
+        [string]$RelPath,
+        [string]$FileName,
+        [string[]]$Patterns
     )
-    if (Test-Path $apignorePath) {
-        $rawApignore = Get-Content -Path $apignorePath -Encoding utf8
-        foreach ($line in $rawApignore) {
-            $t = $line.Trim()
-            if ($t -and -not $t.StartsWith('#')) {
-                $apIgnorePatterns += $t.TrimEnd('/')
-            }
-        }
-    }
+    $normalizedRel = $RelPath -replace '\\', '/'
+    $parts = $normalizedRel.Split('/')
+    foreach ($p in $Patterns) {
+        $cleanPat = ($p.Trim() -replace '\\', '/').TrimEnd('/')
+        if ($cleanPat.StartsWith('!')) { continue }
 
-    function Test-ApIgnored {
-        param (
-            [string]$RelPath,
-            [string]$FileName,
-            [string[]]$Patterns
-        )
-        $normalizedRel = $RelPath -replace '\\', '/'
-        $parts = $normalizedRel.Split('/')
-        foreach ($p in $Patterns) {
-            $cleanPat = ($p.Trim() -replace '\\', '/').TrimEnd('/')
-            if ($cleanPat.StartsWith('!')) { continue }
-
-            foreach ($part in $parts) {
-                if ($part -like $cleanPat) {
-                    return $true
-                }
-            }
-            if ($normalizedRel -like $cleanPat -or $normalizedRel -like "*/$cleanPat" -or $normalizedRel -like "$cleanPat/*" -or $normalizedRel -like "*/$cleanPat/*") {
-                return $true
-            }
-            if ($FileName -like $cleanPat) {
+        foreach ($part in $parts) {
+            if ($part -like $cleanPat) {
                 return $true
             }
         }
-        return $false
-    }
-
-    $zipStream = [System.IO.File]::Open($stagedSourceZip, [System.IO.FileMode]::Create)
-    $archive = New-Object System.IO.Compression.ZipArchive($zipStream, [System.IO.Compression.ZipArchiveMode]::Create)
-
-    try {
-        $allWorldFiles = Get-ChildItem -Path $worldDir -Recurse | Where-Object { -not $_.PSIsContainer }
-        $sourceFiles = @()
-
-        foreach ($file in $allWorldFiles) {
-            $rel = $file.FullName.Substring($worldDir.Length).TrimStart('\', '/')
-            if (-not (Test-ApIgnored -RelPath $rel -FileName $file.Name -Patterns $apIgnorePatterns)) {
-                $sourceFiles += @{ File = $file; Rel = $rel }
-            }
+        if ($normalizedRel -like $cleanPat -or $normalizedRel -like "*/$cleanPat" -or $normalizedRel -like "$cleanPat/*" -or $normalizedRel -like "*/$cleanPat/*") {
+            return $true
         }
-
-        Log-Info "Found $($sourceFiles.Count) world files adhering to .apignore"
-
-        foreach ($item in $sourceFiles) {
-            # Use forward slashes inside zip for POSIX compatibility
-            $entryName = "insaniquarium/" + ($item.Rel -replace '\\', '/')
-            [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
-                $archive,
-                $item.File.FullName,
-                $entryName,
-                [System.IO.Compression.CompressionLevel]::Optimal
-            ) | Out-Null
+        if ($FileName -like $cleanPat) {
+            return $true
         }
     }
-    finally {
-        $archive.Dispose()
-        $zipStream.Dispose()
+    return $false
+}
+
+$zipStream = [System.IO.File]::Open($stagedSourceZip, [System.IO.FileMode]::Create)
+$archive = New-Object System.IO.Compression.ZipArchive($zipStream, [System.IO.Compression.ZipArchiveMode]::Create)
+
+try {
+    $allWorldFiles = Get-ChildItem -Path $worldDir -Recurse | Where-Object { -not $_.PSIsContainer }
+    $sourceFiles = @()
+
+    foreach ($file in $allWorldFiles) {
+        $rel = $file.FullName.Substring($worldDir.Length).TrimStart('\', '/')
+        if (-not (Test-ApIgnored -RelPath $rel -FileName $file.Name -Patterns $apIgnorePatterns)) {
+            $sourceFiles += @{ File = $file; Rel = $rel }
+        }
     }
 
-    Log-Success "Staged source zip: $stagedSourceZip ($((Get-Item $stagedSourceZip).Length.ToString('N0')) bytes)"
+    Log-Info "Found $($sourceFiles.Count) world files adhering to .apignore"
 
-    # Build WinFish source code zip archive (following .gitignore)
-    if ($resolvedWinFishDir -and -not $SkipWinFish) {
-        Log-Info "Creating WinFish source code zip archive ($((Split-Path $stagedWinFishZip -Leaf)))..."
-
-        if (Test-Path $stagedWinFishZip) {
-            Remove-Item -Path $stagedWinFishZip -Force
-        }
-
-        function Get-WinFishFiles {
-            param ([string]$Dir)
-
-            $hasGit = Test-Path (Join-Path $Dir ".git")
-            if ($hasGit) {
-                try {
-                    $gitFiles = git -c core.quotepath=false -C $Dir ls-files --cached --others --exclude-standard 2>$null
-                    if ($LASTEXITCODE -eq 0 -and $gitFiles) {
-                        $ignoredCached = @(git -c core.quotepath=false -C $Dir ls-files -c -i --exclude-standard 2>$null)
-                        $ignoredSet = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)
-                        foreach ($ig in $ignoredCached) {
-                            if ($ig) { [void]$ignoredSet.Add($ig.Trim()) }
-                        }
-
-                        $files = @()
-                        foreach ($f in $gitFiles) {
-                            $trimmed = $f.Trim()
-                            if ($trimmed -and -not $ignoredSet.Contains($trimmed)) {
-                                $files += $trimmed
-                            }
-                        }
-                        return $files
-                    }
-                }
-                catch {
-                    Log-Warn "git ls-files failed on WinFish directory, falling back to manual gitignore parser."
-                }
-            }
-
-            $allItems = Get-ChildItem -Path $Dir -Recurse | Where-Object { -not $_.PSIsContainer }
-            $files = @()
-            foreach ($item in $allItems) {
-                $rel = $item.FullName.Substring($Dir.Length).TrimStart('\', '/') -replace '\\', '/'
-                if ($rel -match '(^|/)\.git(/|$)') { continue }
-
-                $matched = $false
-                foreach ($pat in $ignorePatterns) {
-                    $cleanPat = $pat.Trim().TrimEnd('/')
-                    if ($cleanPat.StartsWith('!')) {
-                        continue
-                    }
-                    if ($cleanPat.StartsWith('/')) {
-                        $rootPat = $cleanPat.Substring(1)
-                        if ($rel -like "$rootPat*" -or $rel -like $rootPat) {
-                            $matched = $true
-                            break
-                        }
-                    }
-                    else {
-                        if ($rel -like "*$cleanPat*" -or $item.Name -like $cleanPat) {
-                            $matched = $true
-                            break
-                        }
-                    }
-                }
-                if (-not $matched) {
-                    $files += $rel
-                }
-            }
-            return $files
-        }
-
-        $winFishFiles = Get-WinFishFiles -Dir $resolvedWinFishDir
-        Log-Info "Found $($winFishFiles.Count) WinFish files adhering to .gitignore"
-
-        $wzStream = [System.IO.File]::Open($stagedWinFishZip, [System.IO.FileMode]::Create)
-        $wArchive = New-Object System.IO.Compression.ZipArchive($wzStream, [System.IO.Compression.ZipArchiveMode]::Create)
-
-        try {
-            foreach ($relPath in $winFishFiles) {
-                $fullPath = Join-Path $resolvedWinFishDir $relPath
-                if (Test-Path $fullPath -PathType Leaf) {
-                    $entryName = "WinFish/" + ($relPath -replace '\\', '/')
-                    [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
-                        $wArchive,
-                        $fullPath,
-                        $entryName,
-                        [System.IO.Compression.CompressionLevel]::Optimal
-                    ) | Out-Null
-                }
-            }
-        }
-        finally {
-            $wArchive.Dispose()
-            $wzStream.Dispose()
-        }
-
-        Log-Success "Staged WinFish zip: $stagedWinFishZip ($((Get-Item $stagedWinFishZip).Length.ToString('N0')) bytes)"
+    foreach ($item in $sourceFiles) {
+        # Use forward slashes inside zip for POSIX compatibility
+        $entryName = "insaniquarium/" + ($item.Rel -replace '\\', '/')
+        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+            $archive,
+            $item.File.FullName,
+            $entryName,
+            [System.IO.Compression.CompressionLevel]::Optimal
+        ) | Out-Null
     }
-    elseif ($SkipWinFish -and (Test-Path $stagedWinFishZip)) {
+}
+finally {
+    $archive.Dispose()
+    $zipStream.Dispose()
+}
+
+Log-Success "Staged source zip: $stagedSourceZip ($((Get-Item $stagedSourceZip).Length.ToString('N0')) bytes)"
+
+# Build WinFish source code zip archive (following .gitignore)
+if ($resolvedWinFishDir -and -not $SkipWinFish) {
+    Log-Info "Creating WinFish source code zip archive ($((Split-Path $stagedWinFishZip -Leaf)))..."
+
+    if (Test-Path $stagedWinFishZip) {
         Remove-Item -Path $stagedWinFishZip -Force
     }
 
-    # -----------------------------------------------------------------------------
-    # 7. Prepare Release Notes & Load Patch Notes
-    # -----------------------------------------------------------------------------
-    $patchNotesBlock = ""
-    if (Test-Path $patchNotesPath) {
-        Log-Info "Loading patch notes from $patchNotesPath..."
-        $rawPatchNotes = (Get-Content -Path $patchNotesPath -Raw -Encoding utf8).Trim()
-        if ($rawPatchNotes) {
-            $patchNotesBlock = @"
+    function Get-WinFishFiles {
+        param ([string]$Dir)
+
+        $hasGit = Test-Path (Join-Path $Dir ".git")
+        if ($hasGit) {
+            try {
+                $gitFiles = git -c core.quotepath=false -C $Dir ls-files --cached --others --exclude-standard 2>$null
+                if ($LASTEXITCODE -eq 0 -and $gitFiles) {
+                    $ignoredCached = @(git -c core.quotepath=false -C $Dir ls-files -c -i --exclude-standard 2>$null)
+                    $ignoredSet = New-Object 'System.Collections.Generic.HashSet[string]' ([System.StringComparer]::OrdinalIgnoreCase)
+                    foreach ($ig in $ignoredCached) {
+                        if ($ig) { [void]$ignoredSet.Add($ig.Trim()) }
+                    }
+
+                    $files = @()
+                    foreach ($f in $gitFiles) {
+                        $trimmed = $f.Trim()
+                        if ($trimmed -and -not $ignoredSet.Contains($trimmed)) {
+                            $files += $trimmed
+                        }
+                    }
+                    return $files
+                }
+            }
+            catch {
+                Log-Warn "git ls-files failed on WinFish directory, falling back to manual gitignore parser."
+            }
+        }
+
+        $allItems = Get-ChildItem -Path $Dir -Recurse | Where-Object { -not $_.PSIsContainer }
+        $files = @()
+        foreach ($item in $allItems) {
+            $rel = $item.FullName.Substring($Dir.Length).TrimStart('\', '/') -replace '\\', '/'
+            if ($rel -match '(^|/)\.git(/|$)') { continue }
+
+            $matched = $false
+            foreach ($pat in $ignorePatterns) {
+                $cleanPat = $pat.Trim().TrimEnd('/')
+                if ($cleanPat.StartsWith('!')) {
+                    continue
+                }
+                if ($cleanPat.StartsWith('/')) {
+                    $rootPat = $cleanPat.Substring(1)
+                    if ($rel -like "$rootPat*" -or $rel -like $rootPat) {
+                        $matched = $true
+                        break
+                    }
+                }
+                else {
+                    if ($rel -like "*$cleanPat*" -or $item.Name -like $cleanPat) {
+                        $matched = $true
+                        break
+                    }
+                }
+            }
+            if (-not $matched) {
+                $files += $rel
+            }
+        }
+        return $files
+    }
+
+    $winFishFiles = Get-WinFishFiles -Dir $resolvedWinFishDir
+    Log-Info "Found $($winFishFiles.Count) WinFish files adhering to .gitignore"
+
+    $wzStream = [System.IO.File]::Open($stagedWinFishZip, [System.IO.FileMode]::Create)
+    $wArchive = New-Object System.IO.Compression.ZipArchive($wzStream, [System.IO.Compression.ZipArchiveMode]::Create)
+
+    try {
+        foreach ($relPath in $winFishFiles) {
+            $fullPath = Join-Path $resolvedWinFishDir $relPath
+            if (Test-Path $fullPath -PathType Leaf) {
+                $entryName = "WinFish/" + ($relPath -replace '\\', '/')
+                [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+                    $wArchive,
+                    $fullPath,
+                    $entryName,
+                    [System.IO.Compression.CompressionLevel]::Optimal
+                ) | Out-Null
+            }
+        }
+    }
+    finally {
+        $wArchive.Dispose()
+        $wzStream.Dispose()
+    }
+
+    Log-Success "Staged WinFish zip: $stagedWinFishZip ($((Get-Item $stagedWinFishZip).Length.ToString('N0')) bytes)"
+}
+elseif ($SkipWinFish -and (Test-Path $stagedWinFishZip)) {
+    Remove-Item -Path $stagedWinFishZip -Force
+}
+
+# -----------------------------------------------------------------------------
+# 7. Prepare Release Notes & Load Patch Notes
+# -----------------------------------------------------------------------------
+$patchNotesBlock = ""
+if (Test-Path $patchNotesPath) {
+    Log-Info "Loading patch notes from $patchNotesPath..."
+    $rawPatchNotes = (Get-Content -Path $patchNotesPath -Raw -Encoding utf8).Trim()
+    if ($rawPatchNotes) {
+        $patchNotesBlock = @"
 
 ---
 
@@ -590,139 +591,113 @@ else {
 
 $rawPatchNotes
 "@
-        }
     }
+}
 
-    $winFishAssetLine = if (-not $SkipWinFish -and $resolvedWinFishDir -and (Test-Path $stagedWinFishZip)) {
-        "`n- **`winfish-source-v$Version.zip`**: Source code of the WinFish Archipelago client."
-    }
-    else { "" }
+Log-Info "Loading setup guide from $setupDocPath..."
+$setupGuideBlock = $(Get-Content -Path $setupDocPath -Raw -Encoding utf8).Trim()
 
-    if ($Notes) {
-        $releaseNotesContent = $Notes
-    }
-    elseif ($NotesFile -and (Test-Path $NotesFile)) {
-        $releaseNotesContent = Get-Content -Path $NotesFile -Raw -Encoding utf8
-    }
-    else {
-        $releaseNotesContent = @"
+$winFishAssetLine = if (-not $SkipWinFish -and $resolvedWinFishDir -and (Test-Path $stagedWinFishZip)) {
+    "`n- **``winfish-source-v$Version.zip``**: Source code of the WinFish Archipelago client."
+}
+else { "" }
+
+if ($Notes) {
+    $releaseNotesContent = $Notes
+}
+elseif ($NotesFile -and (Test-Path $NotesFile)) {
+    $releaseNotesContent = Get-Content -Path $NotesFile -Raw -Encoding utf8
+}
+else {
+    $releaseNotesContent = @"
 # $gameName APWorld v$Version
 
-Archipelago world integration for **Insaniquarium Deluxe** (PopCap / Steam).
-
-## Requirements
-- **Archipelago**: [v$minApVersion or newer](https://github.com/ArchipelagoMW/Archipelago/releases)
-- **Game**: *Insaniquarium Deluxe* English PC release (Steam / PopCap)
-- **APFish**: [Latest Version](https://github.com/benyoung32/WinFish)
+Archipelago world integration for **Insaniquarium Deluxe**
+$setupGuideBlock
+---
 $patchNotesBlock
 ---
 
-## Installation & Setup
-
-### For Players & Multiworld Hosts:
-1. Download **`insaniquarium.apworld`** from the Assets below.
-2. Install the `.apworld`:
-   - **Launcher**: Double-click `insaniquarium.apworld` to automatically install it into your Archipelago Launcher.
-   - **Manual**: Place `insaniquarium.apworld` into your Archipelago `custom_worlds/` directory (e.g. `C:\ProgramData\Archipelago\custom_worlds`).
-3. Download **`Insaniquarium.yaml`** and place it in your Archipelago `Players/` folder.
-4. Customize your options (starting tank, egg pieces per level, victory conditions, and trap rates) before generating.
-
-### Playing:
-1. Generate your multiworld game.
-2. The generator will produce your `.apinsani` patch file.
-3. Use the Import button inside the Insaniquarium profile menu to load the provided patch file and input the connection info for your Archipelago server.
-
----
-
-## Features & Options
-- **Starting Tank**: Choose between starting in Tank 1, 2, 3, 4, or random.
-- **Egg Checks**: Configurable egg piece checks (1, 2, or all 3 per level).
-- **Victory Conditions**: Completing Tanks 1-4 is always required; optionally require Cyrax, Time Trials, or Challenge Mode.
-- **Upgrade Availability**: Control when received upgrades become accessible (always, free upon receiving, or normal shop price).
-- **Traps**: Optional Alien Attack and Famine traps.
-
----
-
 ## Release Assets
-- **`insaniquarium.apworld`**: Archipelago game world package.
-- **`Insaniquarium.yaml`**: Player configuration YAML template.
-- **`insaniquarium-source-v$Version.zip`**: Source code of the Insaniquarium Deluxe world.$winFishAssetLine
+- **``insaniquarium.apworld``**: Archipelago game world package.
+- **``Insaniquarium.yaml``**: Player configuration YAML template.
+- **``insaniquarium-source-v$Version.zip``**: Source code of the Insaniquarium Deluxe world.$winFishAssetLine
 "@
-    }
+}
 
-    Set-Content -Path $stagedReleaseNotes -Value $releaseNotesContent -Encoding utf8
-    Log-Success "Generated release notes at $stagedReleaseNotes"
+Set-Content -Path $stagedReleaseNotes -Value $releaseNotesContent -Encoding utf8
+Log-Success "Generated release notes at $stagedReleaseNotes"
 
-    # -----------------------------------------------------------------------------
-    # 8. Publish via GitHub CLI
-    # -----------------------------------------------------------------------------
-    $releaseAssets = @(
-        $stagedApworld,
-        $stagedYaml,
-        $stagedSourceZip
-    )
+# -----------------------------------------------------------------------------
+# 8. Publish via GitHub CLI
+# -----------------------------------------------------------------------------
+$releaseAssets = @(
+    $stagedApworld,
+    $stagedYaml,
+    $stagedSourceZip
+)
+if (-not $SkipWinFish -and (Test-Path $stagedWinFishZip)) {
+    $releaseAssets += $stagedWinFishZip
+}
+
+if ($LocalOnly) {
+    Log-Success "Local staging completed successfully!"
+    Write-Host ""
+    Write-Host "Files prepared in: $stagingDir" -ForegroundColor Green
+    Write-Host "  - insaniquarium.apworld"
+    Write-Host "  - Insaniquarium.yaml"
+    Write-Host "  - insaniquarium-source-v$Version.zip"
     if (-not $SkipWinFish -and (Test-Path $stagedWinFishZip)) {
-        $releaseAssets += $stagedWinFishZip
+        Write-Host "  - $((Split-Path $stagedWinFishZip -Leaf))"
     }
+    Write-Host "  - release_notes.md"
+    Write-Host ""
+    Write-Host "To publish manually later, you can run:" -ForegroundColor DarkGray
+    $assetsStr = ($releaseAssets | ForEach-Object { "`"$_`"" }) -join " "
+    Write-Host "  gh release create $Tag $assetsStr --title `"$Title`" --notes-file `"$stagedReleaseNotes`" --target `"$Target`"" -ForegroundColor DarkGray
+    exit 0
+}
 
-    if ($LocalOnly) {
-        Log-Success "Local staging completed successfully!"
-        Write-Host ""
-        Write-Host "Files prepared in: $stagingDir" -ForegroundColor Green
-        Write-Host "  - insaniquarium.apworld"
-        Write-Host "  - Insaniquarium.yaml"
-        Write-Host "  - insaniquarium-source-v$Version.zip"
-        if (-not $SkipWinFish -and (Test-Path $stagedWinFishZip)) {
-            Write-Host "  - $((Split-Path $stagedWinFishZip -Leaf))"
-        }
-        Write-Host "  - release_notes.md"
-        Write-Host ""
-        Write-Host "To publish manually later, you can run:" -ForegroundColor DarkGray
-        $assetsStr = ($releaseAssets | ForEach-Object { "`"$_`"" }) -join " "
-        Write-Host "  gh release create $Tag $assetsStr --title `"$Title`" --notes-file `"$stagedReleaseNotes`" --target `"$Target`"" -ForegroundColor DarkGray
-        exit 0
-    }
+Log-Info "Publishing release to GitHub ($repoWebUrl)..."
 
-    Log-Info "Publishing release to GitHub ($repoWebUrl)..."
+$ghArgs = @(
+    "release", "create", $Tag
+) + $releaseAssets + @(
+    "--title", $Title,
+    "--notes-file", $stagedNotes,
+    "--target", $Target
+)
 
-    $ghArgs = @(
-        "release", "create", $Tag
-    ) + $releaseAssets + @(
-        "--title", $Title,
-        "--notes-file", $stagedNotes,
-        "--target", $Target
-    )
+if ($Draft) {
+    $ghArgs += "--draft"
+    Log-Info "Flag: Creating as DRAFT release"
+}
 
-    if ($Draft) {
-        $ghArgs += "--draft"
-        Log-Info "Flag: Creating as DRAFT release"
-    }
+if ($Prerelease) {
+    $ghArgs += "--prerelease"
+    Log-Info "Flag: Creating as PRE-RELEASE"
+}
 
-    if ($Prerelease) {
-        $ghArgs += "--prerelease"
-        Log-Info "Flag: Creating as PRE-RELEASE"
-    }
-
-    try {
-        & gh @ghArgs
-        if ($LASTEXITCODE -ne 0) {
-            Log-Error "GitHub CLI release command returned error code $LASTEXITCODE"
-            exit 1
-        }
-    }
-    catch {
-        Log-Error "Failed to execute gh release command: $_"
+try {
+    & gh @ghArgs
+    if ($LASTEXITCODE -ne 0) {
+        Log-Error "GitHub CLI release command returned error code $LASTEXITCODE"
         exit 1
     }
+}
+catch {
+    Log-Error "Failed to execute gh release command: $_"
+    exit 1
+}
 
-    Write-Host ""
-    Write-Host "==================================================" -ForegroundColor Green
-    Write-Host "   Release Published Successfully!                " -ForegroundColor Green
-    Write-Host "==================================================" -ForegroundColor Green
-    Write-Host ""
-    Write-Host "Direct Release URL:" -ForegroundColor Cyan
-    Write-Host "  $repoWebUrl/releases/tag/$Tag" -ForegroundColor White
-    Write-Host ""
-    Write-Host "Releases Search URL (like Peggle Deluxe):" -ForegroundColor Cyan
-    Write-Host "  $repoWebUrl/releases?q=insaniquarium&expanded=true#$Tag" -ForegroundColor White
-    Write-Host ""
+Write-Host ""
+Write-Host "==================================================" -ForegroundColor Green
+Write-Host "   Release Published Successfully!                " -ForegroundColor Green
+Write-Host "==================================================" -ForegroundColor Green
+Write-Host ""
+Write-Host "Direct Release URL:" -ForegroundColor Cyan
+Write-Host "  $repoWebUrl/releases/tag/$Tag" -ForegroundColor White
+Write-Host ""
+Write-Host "Releases Search URL (like Peggle Deluxe):" -ForegroundColor Cyan
+Write-Host "  $repoWebUrl/releases?q=insaniquarium&expanded=true#$Tag" -ForegroundColor White
+Write-Host ""
