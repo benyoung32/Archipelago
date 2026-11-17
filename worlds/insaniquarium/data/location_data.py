@@ -6,116 +6,184 @@
 from __future__ import annotations
 
 import enum
+from typing import TYPE_CHECKING
 
-from BaseClasses import Location
+from BaseClasses import Location, LocationProgressType
+
+if TYPE_CHECKING:
+    from BaseClasses import Region
 
 GAME_NAME = "Insaniquarium Deluxe"
 
 class InsaniquariumLocation(Location):
     game = GAME_NAME
 
+    def __init__(
+        self,
+        player: int,
+        name: str = "",
+        address: int | None = None,
+        parent: Region | None = None,
+    ) -> None:
+        super().__init__(player, name, address, parent)
+        if address is not None:
+            try:
+                self.progress_type = InsaniquariumLocationData(address).classification
+            except ValueError:
+                pass
+
 
 class InsaniquariumLocationData(enum.IntEnum):
     """Every location with an ID. Auto-generated from locations.json."""
 
-    def __new__(cls, id: int, location_name: str, region: str = "") -> InsaniquariumLocationData:
+    def __new__(
+        cls,
+        id: int,
+        location_name: str,
+        region: str = "",
+        classification: LocationProgressType = LocationProgressType.DEFAULT,
+    ) -> InsaniquariumLocationData:
         obj = int.__new__(cls, id)
         obj._value_ = id
         return obj
 
-    def __init__(self, id: int, location_name: str, region: str = "") -> None:
+    def __init__(
+        self,
+        id: int,
+        location_name: str,
+        region: str = "",
+        classification: LocationProgressType = LocationProgressType.DEFAULT,
+    ) -> None:
         self.id = id
         self.location_name = location_name
         self.region = region
+        self.classification = classification
 
     @property
     def category(self) -> str:
         return self.region
 
-    TANK_1_COMPLETE = 1, "Tank 1 Complete", "Tank 1"
-    TANK_1_1_EGG_PIECE_1 = 2, "Tank 1-1 Egg Piece 1", "Tank 1"
-    TANK_1_1_EGG_PIECE_2 = 3, "Tank 1-1 Egg Piece 2", "Tank 1"
-    TANK_1_1_EGG_PIECE_3 = 4, "Tank 1-1 Egg Piece 3", "Tank 1"
-    TANK_1_2_EGG_PIECE_1 = 5, "Tank 1-2 Egg Piece 1", "Tank 1"
-    TANK_1_2_EGG_PIECE_2 = 6, "Tank 1-2 Egg Piece 2", "Tank 1"
-    TANK_1_2_EGG_PIECE_3 = 7, "Tank 1-2 Egg Piece 3", "Tank 1"
-    TANK_1_3_EGG_PIECE_1 = 8, "Tank 1-3 Egg Piece 1", "Tank 1"
-    TANK_1_3_EGG_PIECE_2 = 9, "Tank 1-3 Egg Piece 2", "Tank 1"
-    TANK_1_3_EGG_PIECE_3 = 10, "Tank 1-3 Egg Piece 3", "Tank 1"
-    TANK_1_4_EGG_PIECE_1 = 11, "Tank 1-4 Egg Piece 1", "Tank 1"
-    TANK_1_4_EGG_PIECE_2 = 12, "Tank 1-4 Egg Piece 2", "Tank 1"
-    TANK_1_4_EGG_PIECE_3 = 13, "Tank 1-4 Egg Piece 3", "Tank 1"
-    TANK_1_5_EGG_PIECE_1 = 14, "Tank 1-5 Egg Piece 1", "Tank 1"
-    TANK_1_5_EGG_PIECE_2 = 15, "Tank 1-5 Egg Piece 2", "Tank 1"
-    TANK_1_5_EGG_PIECE_3 = 16, "Tank 1-5 Egg Piece 3", "Tank 1"
-    TIME_TRIAL_1_COMPLETE = 17, "Time Trial 1 Complete", "Tank 1"
-    CHALLENGE_1_COMPLETE = 18, "Challenge 1 Complete", "Tank 1"
-    TANK_2_COMPLETE = 19, "Tank 2 Complete", "Tank 2"
-    TANK_2_1_EGG_PIECE_1 = 20, "Tank 2-1 Egg Piece 1", "Tank 2"
-    TANK_2_1_EGG_PIECE_2 = 21, "Tank 2-1 Egg Piece 2", "Tank 2"
-    TANK_2_1_EGG_PIECE_3 = 22, "Tank 2-1 Egg Piece 3", "Tank 2"
-    TANK_2_2_EGG_PIECE_1 = 23, "Tank 2-2 Egg Piece 1", "Tank 2"
-    TANK_2_2_EGG_PIECE_2 = 24, "Tank 2-2 Egg Piece 2", "Tank 2"
-    TANK_2_2_EGG_PIECE_3 = 25, "Tank 2-2 Egg Piece 3", "Tank 2"
-    TANK_2_3_EGG_PIECE_1 = 26, "Tank 2-3 Egg Piece 1", "Tank 2"
-    TANK_2_3_EGG_PIECE_2 = 27, "Tank 2-3 Egg Piece 2", "Tank 2"
-    TANK_2_3_EGG_PIECE_3 = 28, "Tank 2-3 Egg Piece 3", "Tank 2"
-    TANK_2_4_EGG_PIECE_1 = 29, "Tank 2-4 Egg Piece 1", "Tank 2"
-    TANK_2_4_EGG_PIECE_2 = 30, "Tank 2-4 Egg Piece 2", "Tank 2"
-    TANK_2_4_EGG_PIECE_3 = 31, "Tank 2-4 Egg Piece 3", "Tank 2"
-    TANK_2_5_EGG_PIECE_1 = 32, "Tank 2-5 Egg Piece 1", "Tank 2"
-    TANK_2_5_EGG_PIECE_2 = 33, "Tank 2-5 Egg Piece 2", "Tank 2"
-    TANK_2_5_EGG_PIECE_3 = 34, "Tank 2-5 Egg Piece 3", "Tank 2"
-    TIME_TRIAL_2_COMPLETE = 35, "Time Trial 2 Complete", "Tank 2"
-    CHALLENGE_2_COMPLETE = 36, "Challenge 2 Complete", "Tank 2"
-    TANK_3_COMPLETE = 37, "Tank 3 Complete", "Tank 3"
-    TANK_3_1_EGG_PIECE_1 = 38, "Tank 3-1 Egg Piece 1", "Tank 3"
-    TANK_3_1_EGG_PIECE_2 = 39, "Tank 3-1 Egg Piece 2", "Tank 3"
-    TANK_3_1_EGG_PIECE_3 = 40, "Tank 3-1 Egg Piece 3", "Tank 3"
-    TANK_3_2_EGG_PIECE_1 = 41, "Tank 3-2 Egg Piece 1", "Tank 3"
-    TANK_3_2_EGG_PIECE_2 = 42, "Tank 3-2 Egg Piece 2", "Tank 3"
-    TANK_3_2_EGG_PIECE_3 = 43, "Tank 3-2 Egg Piece 3", "Tank 3"
-    TANK_3_3_EGG_PIECE_1 = 44, "Tank 3-3 Egg Piece 1", "Tank 3"
-    TANK_3_3_EGG_PIECE_2 = 45, "Tank 3-3 Egg Piece 2", "Tank 3"
-    TANK_3_3_EGG_PIECE_3 = 46, "Tank 3-3 Egg Piece 3", "Tank 3"
-    TANK_3_4_EGG_PIECE_1 = 47, "Tank 3-4 Egg Piece 1", "Tank 3"
-    TANK_3_4_EGG_PIECE_2 = 48, "Tank 3-4 Egg Piece 2", "Tank 3"
-    TANK_3_4_EGG_PIECE_3 = 49, "Tank 3-4 Egg Piece 3", "Tank 3"
-    TANK_3_5_EGG_PIECE_1 = 50, "Tank 3-5 Egg Piece 1", "Tank 3"
-    TANK_3_5_EGG_PIECE_2 = 51, "Tank 3-5 Egg Piece 2", "Tank 3"
-    TANK_3_5_EGG_PIECE_3 = 52, "Tank 3-5 Egg Piece 3", "Tank 3"
-    TIME_TRIAL_3_COMPLETE = 53, "Time Trial 3 Complete", "Tank 3"
-    CHALLENGE_3_COMPLETE = 54, "Challenge 3 Complete", "Tank 3"
-    TANK_4_COMPLETE = 55, "Tank 4 Complete", "Tank 4"
-    TANK_4_1_EGG_PIECE_1 = 56, "Tank 4-1 Egg Piece 1", "Tank 4"
-    TANK_4_1_EGG_PIECE_2 = 57, "Tank 4-1 Egg Piece 2", "Tank 4"
-    TANK_4_1_EGG_PIECE_3 = 58, "Tank 4-1 Egg Piece 3", "Tank 4"
-    TANK_4_2_EGG_PIECE_1 = 59, "Tank 4-2 Egg Piece 1", "Tank 4"
-    TANK_4_2_EGG_PIECE_2 = 60, "Tank 4-2 Egg Piece 2", "Tank 4"
-    TANK_4_2_EGG_PIECE_3 = 61, "Tank 4-2 Egg Piece 3", "Tank 4"
-    TANK_4_3_EGG_PIECE_1 = 62, "Tank 4-3 Egg Piece 1", "Tank 4"
-    TANK_4_3_EGG_PIECE_2 = 63, "Tank 4-3 Egg Piece 2", "Tank 4"
-    TANK_4_3_EGG_PIECE_3 = 64, "Tank 4-3 Egg Piece 3", "Tank 4"
-    TANK_4_4_EGG_PIECE_1 = 65, "Tank 4-4 Egg Piece 1", "Tank 4"
-    TANK_4_4_EGG_PIECE_2 = 66, "Tank 4-4 Egg Piece 2", "Tank 4"
-    TANK_4_4_EGG_PIECE_3 = 67, "Tank 4-4 Egg Piece 3", "Tank 4"
-    TANK_4_5_EGG_PIECE_1 = 68, "Tank 4-5 Egg Piece 1", "Tank 4"
-    TANK_4_5_EGG_PIECE_2 = 69, "Tank 4-5 Egg Piece 2", "Tank 4"
-    TANK_4_5_EGG_PIECE_3 = 70, "Tank 4-5 Egg Piece 3", "Tank 4"
-    TIME_TRIAL_4_COMPLETE = 71, "Time Trial 4 Complete", "Tank 4"
-    CHALLENGE_4_COMPLETE = 72, "Challenge 4 Complete", "Tank 4"
-    CYRAX = 73, "Cyrax", "Tank 5"
-    BONUS_PET_1 = 74, "Bonus Pet 1", "Bonus Pets"
-    BONUS_PET_2 = 75, "Bonus Pet 2", "Bonus Pets"
-    BONUS_PET_3 = 76, "Bonus Pet 3", "Bonus Pets"
-    BONUS_PET_4 = 77, "Bonus Pet 4", "Bonus Pets"
-    DEFEAT_SYLVESTER = 78, "Defeat Sylvester", "Tank 1"
-    DEFEAT_BALROG = 79, "Defeat Balrog", "Tank 1"
-    DEFEAT_GUS = 80, "Defeat Gus", "Tank 2"
-    DEFEAT_DESTRUCTOR = 81, "Defeat Destructor", "Tank 2"
-    DEFEAT_PSYCHOSQUID = 82, "Defeat Psychosquid", "Tank 3"
-    DEFEAT_ULYSSES = 83, "Defeat Ulysses", "Tank 3"
-    DEFEAT_BILATERUS = 84, "Defeat Bilaterus", "Tank 4"
+    @property
+    def progress_type(self) -> LocationProgressType:
+        return self.classification
+
+    @property
+    def is_egg_piece_1(self) -> bool:
+        return self.location_name.endswith("Egg Piece 1")
+
+    @property
+    def is_egg_piece_2(self) -> bool:
+        return self.location_name.endswith("Egg Piece 2")
+
+    @property
+    def is_time_trial(self) -> bool:
+        return self.location_name.startswith("Time Trial ")
+
+    @property
+    def is_challenge(self) -> bool:
+        return self.location_name.startswith("Challenge ")
+
+    @property
+    def is_bonus_pet(self) -> bool:
+        return self.location_name.startswith("Bonus Pet ")
+
+    @property
+    def bonus_pet_index(self) -> int:
+        if self.is_bonus_pet:
+            try:
+                return int(self.location_name.rsplit(" ", 1)[-1])
+            except ValueError:
+                return 1
+        return 0
+
+    @property
+    def is_alien(self) -> bool:
+        return self.location_name.startswith("Defeat ")
+
+    TANK_1_COMPLETE = 1, "Tank 1 Complete", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_1_EGG_PIECE_1 = 2, "Tank 1-1 Egg Piece 1", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_1_EGG_PIECE_2 = 3, "Tank 1-1 Egg Piece 2", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_1_EGG_PIECE_3 = 4, "Tank 1-1 Egg Piece 3", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_2_EGG_PIECE_1 = 5, "Tank 1-2 Egg Piece 1", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_2_EGG_PIECE_2 = 6, "Tank 1-2 Egg Piece 2", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_2_EGG_PIECE_3 = 7, "Tank 1-2 Egg Piece 3", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_3_EGG_PIECE_1 = 8, "Tank 1-3 Egg Piece 1", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_3_EGG_PIECE_2 = 9, "Tank 1-3 Egg Piece 2", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_3_EGG_PIECE_3 = 10, "Tank 1-3 Egg Piece 3", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_4_EGG_PIECE_1 = 11, "Tank 1-4 Egg Piece 1", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_4_EGG_PIECE_2 = 12, "Tank 1-4 Egg Piece 2", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_4_EGG_PIECE_3 = 13, "Tank 1-4 Egg Piece 3", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_5_EGG_PIECE_1 = 14, "Tank 1-5 Egg Piece 1", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_5_EGG_PIECE_2 = 15, "Tank 1-5 Egg Piece 2", "Tank 1", LocationProgressType.DEFAULT
+    TANK_1_5_EGG_PIECE_3 = 16, "Tank 1-5 Egg Piece 3", "Tank 1", LocationProgressType.DEFAULT
+    TIME_TRIAL_1_COMPLETE = 17, "Time Trial 1 Complete", "Tank 1", LocationProgressType.DEFAULT
+    CHALLENGE_1_COMPLETE = 18, "Challenge 1 Complete", "Tank 1", LocationProgressType.DEFAULT
+    TANK_2_COMPLETE = 19, "Tank 2 Complete", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_1_EGG_PIECE_1 = 20, "Tank 2-1 Egg Piece 1", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_1_EGG_PIECE_2 = 21, "Tank 2-1 Egg Piece 2", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_1_EGG_PIECE_3 = 22, "Tank 2-1 Egg Piece 3", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_2_EGG_PIECE_1 = 23, "Tank 2-2 Egg Piece 1", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_2_EGG_PIECE_2 = 24, "Tank 2-2 Egg Piece 2", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_2_EGG_PIECE_3 = 25, "Tank 2-2 Egg Piece 3", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_3_EGG_PIECE_1 = 26, "Tank 2-3 Egg Piece 1", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_3_EGG_PIECE_2 = 27, "Tank 2-3 Egg Piece 2", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_3_EGG_PIECE_3 = 28, "Tank 2-3 Egg Piece 3", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_4_EGG_PIECE_1 = 29, "Tank 2-4 Egg Piece 1", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_4_EGG_PIECE_2 = 30, "Tank 2-4 Egg Piece 2", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_4_EGG_PIECE_3 = 31, "Tank 2-4 Egg Piece 3", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_5_EGG_PIECE_1 = 32, "Tank 2-5 Egg Piece 1", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_5_EGG_PIECE_2 = 33, "Tank 2-5 Egg Piece 2", "Tank 2", LocationProgressType.DEFAULT
+    TANK_2_5_EGG_PIECE_3 = 34, "Tank 2-5 Egg Piece 3", "Tank 2", LocationProgressType.DEFAULT
+    TIME_TRIAL_2_COMPLETE = 35, "Time Trial 2 Complete", "Tank 2", LocationProgressType.DEFAULT
+    CHALLENGE_2_COMPLETE = 36, "Challenge 2 Complete", "Tank 2", LocationProgressType.DEFAULT
+    TANK_3_COMPLETE = 37, "Tank 3 Complete", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_1_EGG_PIECE_1 = 38, "Tank 3-1 Egg Piece 1", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_1_EGG_PIECE_2 = 39, "Tank 3-1 Egg Piece 2", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_1_EGG_PIECE_3 = 40, "Tank 3-1 Egg Piece 3", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_2_EGG_PIECE_1 = 41, "Tank 3-2 Egg Piece 1", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_2_EGG_PIECE_2 = 42, "Tank 3-2 Egg Piece 2", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_2_EGG_PIECE_3 = 43, "Tank 3-2 Egg Piece 3", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_3_EGG_PIECE_1 = 44, "Tank 3-3 Egg Piece 1", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_3_EGG_PIECE_2 = 45, "Tank 3-3 Egg Piece 2", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_3_EGG_PIECE_3 = 46, "Tank 3-3 Egg Piece 3", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_4_EGG_PIECE_1 = 47, "Tank 3-4 Egg Piece 1", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_4_EGG_PIECE_2 = 48, "Tank 3-4 Egg Piece 2", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_4_EGG_PIECE_3 = 49, "Tank 3-4 Egg Piece 3", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_5_EGG_PIECE_1 = 50, "Tank 3-5 Egg Piece 1", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_5_EGG_PIECE_2 = 51, "Tank 3-5 Egg Piece 2", "Tank 3", LocationProgressType.DEFAULT
+    TANK_3_5_EGG_PIECE_3 = 52, "Tank 3-5 Egg Piece 3", "Tank 3", LocationProgressType.DEFAULT
+    TIME_TRIAL_3_COMPLETE = 53, "Time Trial 3 Complete", "Tank 3", LocationProgressType.DEFAULT
+    CHALLENGE_3_COMPLETE = 54, "Challenge 3 Complete", "Tank 3", LocationProgressType.DEFAULT
+    TANK_4_COMPLETE = 55, "Tank 4 Complete", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_1_EGG_PIECE_1 = 56, "Tank 4-1 Egg Piece 1", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_1_EGG_PIECE_2 = 57, "Tank 4-1 Egg Piece 2", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_1_EGG_PIECE_3 = 58, "Tank 4-1 Egg Piece 3", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_2_EGG_PIECE_1 = 59, "Tank 4-2 Egg Piece 1", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_2_EGG_PIECE_2 = 60, "Tank 4-2 Egg Piece 2", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_2_EGG_PIECE_3 = 61, "Tank 4-2 Egg Piece 3", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_3_EGG_PIECE_1 = 62, "Tank 4-3 Egg Piece 1", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_3_EGG_PIECE_2 = 63, "Tank 4-3 Egg Piece 2", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_3_EGG_PIECE_3 = 64, "Tank 4-3 Egg Piece 3", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_4_EGG_PIECE_1 = 65, "Tank 4-4 Egg Piece 1", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_4_EGG_PIECE_2 = 66, "Tank 4-4 Egg Piece 2", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_4_EGG_PIECE_3 = 67, "Tank 4-4 Egg Piece 3", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_5_EGG_PIECE_1 = 68, "Tank 4-5 Egg Piece 1", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_5_EGG_PIECE_2 = 69, "Tank 4-5 Egg Piece 2", "Tank 4", LocationProgressType.DEFAULT
+    TANK_4_5_EGG_PIECE_3 = 70, "Tank 4-5 Egg Piece 3", "Tank 4", LocationProgressType.DEFAULT
+    TIME_TRIAL_4_COMPLETE = 71, "Time Trial 4 Complete", "Tank 4", LocationProgressType.DEFAULT
+    CHALLENGE_4_COMPLETE = 72, "Challenge 4 Complete", "Tank 4", LocationProgressType.DEFAULT
+    CYRAX = 73, "Cyrax", "Tank 5", LocationProgressType.DEFAULT
+    BONUS_PET_1 = 74, "Bonus Pet 1", "Bonus Pets", LocationProgressType.DEFAULT
+    BONUS_PET_2 = 75, "Bonus Pet 2", "Bonus Pets", LocationProgressType.DEFAULT
+    BONUS_PET_3 = 76, "Bonus Pet 3", "Bonus Pets", LocationProgressType.DEFAULT
+    BONUS_PET_4 = 77, "Bonus Pet 4", "Bonus Pets", LocationProgressType.DEFAULT
+    DEFEAT_SYLVESTER = 78, "Defeat Sylvester", "Tank 1", LocationProgressType.PRIORITY
+    DEFEAT_BALROG = 79, "Defeat Balrog", "Tank 1", LocationProgressType.PRIORITY
+    DEFEAT_GUS = 80, "Defeat Gus", "Tank 2", LocationProgressType.PRIORITY
+    DEFEAT_DESTRUCTOR = 81, "Defeat Destructor", "Tank 2", LocationProgressType.PRIORITY
+    DEFEAT_PSYCHOSQUID = 82, "Defeat Psychosquid", "Tank 3", LocationProgressType.PRIORITY
+    DEFEAT_ULYSSES = 83, "Defeat Ulysses", "Tank 3", LocationProgressType.PRIORITY
+    DEFEAT_BILATERUS = 84, "Defeat Bilaterus", "Tank 4", LocationProgressType.PRIORITY
 
 
 # Location name constants for convenience and autocomplete

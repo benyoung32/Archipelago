@@ -37,6 +37,15 @@ CLASSIFICATION_MAP = {
     "progression_skip_balancing": "IC.progression_skip_balancing",
 }
 
+LOCATION_CLASSIFICATION_MAP = {
+    "Default": "LocationProgressType.DEFAULT",
+    "Priority": "LocationProgressType.PRIORITY",
+    "Excluded": "LocationProgressType.EXCLUDED",
+    "default": "LocationProgressType.DEFAULT",
+    "priority": "LocationProgressType.PRIORITY",
+    "excluded": "LocationProgressType.EXCLUDED",
+}
+
 
 def load_and_validate_items(path: Path) -> List[Dict[str, Any]]:
     if not path.is_file():
@@ -101,7 +110,7 @@ def load_and_validate_locations(path: Path) -> List[Dict[str, Any]]:
     seen_names: set[str] = set()
 
     for idx, loc in enumerate(locations, start=1):
-        for field in ("code_name", "name", "region"):
+        for field in ("code_name", "name", "region", "classification"):
             if field not in loc:
                 raise ValueError(f"Location #{idx} missing required field '{field}': {loc}")
 
@@ -110,11 +119,17 @@ def load_and_validate_locations(path: Path) -> List[Dict[str, Any]]:
         loc["id"] = loc_id
         code = loc["code_name"]
         name = loc["name"]
+        classification = loc["classification"]
 
         if not isinstance(loc_id, int):
             raise ValueError(f"Location '{code}' ID must be an integer, got: {type(loc_id)}")
         if not IDENTIFIER_REGEX.match(code):
             raise ValueError(f"Location '{code}' has invalid C++/Python identifier code_name.")
+        if classification not in LOCATION_CLASSIFICATION_MAP:
+            raise ValueError(
+                f"Location '{code}' has unknown classification '{classification}'. "
+                f"Valid options: {list(LOCATION_CLASSIFICATION_MAP.keys())}"
+            )
 
         if loc_id in seen_ids:
             raise ValueError(f"Duplicate location ID {loc_id} found on location '{code}'.")
@@ -308,36 +323,105 @@ def generate_python_locations_data(locations: List[Dict[str, Any]]) -> str:
         "from __future__ import annotations",
         "",
         "import enum",
+        "from typing import TYPE_CHECKING",
         "",
-        "from BaseClasses import Location",
+        "from BaseClasses import Location, LocationProgressType",
+        "",
+        "if TYPE_CHECKING:",
+        "    from BaseClasses import Region",
         "",
         'GAME_NAME = "Insaniquarium Deluxe"',
         "",
         "class InsaniquariumLocation(Location):",
         "    game = GAME_NAME",
         "",
+        "    def __init__(",
+        "        self,",
+        "        player: int,",
+        "        name: str = \"\",",
+        "        address: int | None = None,",
+        "        parent: Region | None = None,",
+        "    ) -> None:",
+        "        super().__init__(player, name, address, parent)",
+        "        if address is not None:",
+        "            try:",
+        "                self.progress_type = InsaniquariumLocationData(address).classification",
+        "            except ValueError:",
+        "                pass",
+        "",
         "",
         "class InsaniquariumLocationData(enum.IntEnum):",
         '    """Every location with an ID. Auto-generated from locations.json."""',
         "",
-        "    def __new__(cls, id: int, location_name: str, region: str = \"\") -> InsaniquariumLocationData:",
+        "    def __new__(",
+        "        cls,",
+        "        id: int,",
+        "        location_name: str,",
+        "        region: str = \"\",",
+        "        classification: LocationProgressType = LocationProgressType.DEFAULT,",
+        "    ) -> InsaniquariumLocationData:",
         "        obj = int.__new__(cls, id)",
         "        obj._value_ = id",
         "        return obj",
         "",
-        "    def __init__(self, id: int, location_name: str, region: str = \"\") -> None:",
+        "    def __init__(",
+        "        self,",
+        "        id: int,",
+        "        location_name: str,",
+        "        region: str = \"\",",
+        "        classification: LocationProgressType = LocationProgressType.DEFAULT,",
+        "    ) -> None:",
         "        self.id = id",
         "        self.location_name = location_name",
         "        self.region = region",
+        "        self.classification = classification",
         "",
         "    @property",
         "    def category(self) -> str:",
         "        return self.region",
         "",
+        "    @property",
+        "    def progress_type(self) -> LocationProgressType:",
+        "        return self.classification",
+        "",
+        "    @property",
+        "    def is_egg_piece_1(self) -> bool:",
+        "        return self.location_name.endswith(\"Egg Piece 1\")",
+        "",
+        "    @property",
+        "    def is_egg_piece_2(self) -> bool:",
+        "        return self.location_name.endswith(\"Egg Piece 2\")",
+        "",
+        "    @property",
+        "    def is_time_trial(self) -> bool:",
+        "        return self.location_name.startswith(\"Time Trial \")",
+        "",
+        "    @property",
+        "    def is_challenge(self) -> bool:",
+        "        return self.location_name.startswith(\"Challenge \")",
+        "",
+        "    @property",
+        "    def is_bonus_pet(self) -> bool:",
+        "        return self.location_name.startswith(\"Bonus Pet \")",
+        "",
+        "    @property",
+        "    def bonus_pet_index(self) -> int:",
+        "        if self.is_bonus_pet:",
+        "            try:",
+        "                return int(self.location_name.rsplit(\" \", 1)[-1])",
+        "            except ValueError:",
+        "                return 1",
+        "        return 0",
+        "",
+        "    @property",
+        "    def is_alien(self) -> bool:",
+        "        return self.location_name.startswith(\"Defeat \")",
+        "",
     ]
 
     for loc in locations:
-        lines.append(f'    {loc["code_name"]} = {loc["id"]}, "{loc["name"]}", "{loc["region"]}"')
+        prog_type = LOCATION_CLASSIFICATION_MAP[loc["classification"]]
+        lines.append(f'    {loc["code_name"]} = {loc["id"]}, "{loc["name"]}", "{loc["region"]}", {prog_type}')
 
     lines.extend([
         "",
