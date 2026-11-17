@@ -167,17 +167,8 @@ def generate_cpp_header(items: List[Dict[str, Any]], locations: List[Dict[str, A
 
     lines.extend([
         "\t};",
-        "",
-        "\t// -----------------------------------------------------------------------",
-        "\t// Legacy / Convenience Constants for Direct Integer Access",
-        "\t// -----------------------------------------------------------------------",
     ])
 
-    for item in items:
-        lines.append(f"\tstatic const int64_t AP_ITEM_{item['code_name']} = {item['id']}LL;")
-    lines.append("")
-    for loc in locations:
-        lines.append(f"\tstatic const int64_t AP_LOCATION_{loc['code_name']} = {loc['id']}LL;")
 
     lines.extend([
         "",

@@ -2,13 +2,12 @@
 
 ## What does randomization do to this game?
 
-In Insaniquarium Deluxe, all major progression elements, pets, and upgrades are randomized into the Archipelago multiworld item pool:
+Tank order, pets, and upgrades are randomized into the Archipelago multiworld item pool:
 
-- **Tank Unlocks**: You begin the game with a single unlocked tank (either randomized or selected via YAML) and must find unlocks for the remaining tanks in the multiworld.
-- **Pets**: The 24 unique pets (such as Stinky the Snail, Itchy the Swordfish, Presto the Tadpole, and others) are shuffled into the item pool. Collecting pets allows you to equip them to help manage your tanks.
-- **Pet Slots**: Up to 24 pet slots can be configured between starting pet slots and unlockable slot upgrade items, allowing you to bring more pets into levels simultaneously.
-- **Upgrades**: Weapon level upgrades, food quality upgrades, and maximum food capacity upgrades can be found in the multiworld. Depending on the `upgrade_availability` option, received upgrades are either applied immediately, offered for free in the in-game shop, or made available for purchase at their regular coin cost.
-- **Victory Items**: Progress through each tank and defeat bosses to complete your goal!
+- **Tank Unlocks**: You begin the game with a single unlocked tank and must find unlocks for the remaining tanks in the multiworld.
+- **Pets**: The 24 unique pets are shuffled into the item pool.
+- **Pet Slots**: How many pet slots you start with and how many pet slots are distributed as items in the multiworld is fully configurable.  
+- **Upgrades**: Weapon level upgrades, food quality upgrades, and maximum food capacity upgrades can be found in the multiworld.
 
 ## What is a check in this game?
 
@@ -25,7 +24,7 @@ Locations where you receive items include:
 
 The base requirement is always to complete all 4 Adventure Tanks. You can further customize your victory conditions in your YAML options:
 
-- **Cyrax Required**: Choose whether you must defeat the final boss Cyrax in Tank 5.
+- **Cyrax Required**: Choose whether you must defeat the final boss Cyrax.
 - **Time Trial Required**: Require completing all 4 Time Trials to win.
 - **Challenge Mode Required**: Require completing all 4 Challenge Mode tanks to win.
 
@@ -33,5 +32,13 @@ The base requirement is always to complete all 4 Adventure Tanks. You can furthe
 
 If trap chance is enabled in your options, non-progression filler items may be replaced with:
 
-- **Alien Attack Trap**: Immediately spawns an alien attack in your current tank, forcing you to defend your fish!
-- **Famine Trap**: Instantly drops all fish in your tank into starvation, requiring immediate feeding to prevent losses.
+- **Alien Attack Trap**: Immediately spawns an alien attack in your current tank.
+- **Famine Trap**: Instantly drops all fish in your tank into starvation.
+
+## Death Link
+
+- **Death Link** (`death_link`): Enable or disable Death Link.
+- **Death Link Fish Threshold** (`death_link_amnesty`): Configure how many fish must die in your tank before triggering an outgoing Death Link to the multiworld (default: 5).
+- **Death Link Receive Effect** (`death_link_effect`): Choose how your tank responds when receiving an incoming Death Link:
+  - **Kill All Fish**: Instantly wipes all fish currently in your tank.
+  - **Activate Trap**: Triggers a random active trap (Alien Attack or Famine Trap).

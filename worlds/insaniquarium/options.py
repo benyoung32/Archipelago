@@ -4,12 +4,13 @@ from dataclasses import dataclass
 
 from Options import (
     Choice,
+    DeathLink as BaseDeathLink,
     DefaultOnToggle,
+    OptionGroup,
     PerGameCommonOptions,
     Range,
     StartInventoryPool,
     Toggle,
-    OptionGroup,
 )
 
 class StartingTank(Choice):
@@ -55,7 +56,7 @@ class EggPiecesPerLevel(Range):
     2: Egg pieces 1 and 3 are checks (40 level checks).
     3: All 3 egg pieces in every level are checks (60 level checks)."""
     display_name = "Egg Pieces per Level"
-    range_start = 1
+    range_start = 2
     range_end = 3
     default = 3
 
@@ -68,11 +69,10 @@ class CyraxRequired(DefaultOnToggle):
 class TimeTrialRequired(Toggle):
     "Choose if time trials are necessary to win."
     display_name = "Time Trials Required"
-    default = False
+
 class ChallengeModeRequired(Toggle):
     "Choose if challenge mode is necessary to win."
     display_name = "Challenge Mode Required"
-    default = False    
 
 # TODO: potentially add virtual tank win condition
 class BonusPetLocations(Range):
@@ -128,10 +128,9 @@ class IncludeChallengeMode(DefaultOnToggle):
     NOTE: This option is overwritten by 'Challenge Mode Required' if enabled."""
     display_name = "Include Challenge Mode"
 
-class Aliensanity(Toggle):
+class Aliensanity(DefaultOnToggle):
     """Choose if defeating aliens for the first time is a check"""
     display_name = "Aliensanity"
-    default = True
 
 class TrapChance(Range):
     """Percentage chance to replace non-progression filler items with traps."""
@@ -160,6 +159,30 @@ class FamineTrapWeight(Range):
     default = 50
 
 
+class DeathLink(BaseDeathLink):
+    """When enough of your fish die, a Death Link is sent to everyone who enabled death link.
+    If another player dies, you will receive a death link penalty in your current tank."""
+
+
+class DeathLinkAmnesty(Range):
+    """Number of fish that must die in your tank before sending a Death Link to other players."""
+    display_name = "Death Link Fish Threshold"
+    range_start = 1
+    range_end = 50
+    default = 3
+
+
+class DeathLinkEffect(Choice):
+    """Choose what happens when you receive a Death Link from another player.
+    Kill All Fish: Instantly kills all fish currently in your tank.
+    Activate Trap: Triggers a random trap.
+    Random: Randomly chooses between killing all fish or triggering a trap."""
+    display_name = "Death Link Receive Effect"
+    option_kill_all_fish = 0
+    option_activate_trap = 1
+    default = 0
+
+
 @dataclass
 class InsaniquariumOptions(PerGameCommonOptions):
     starting_tank: StartingTank
@@ -180,6 +203,10 @@ class InsaniquariumOptions(PerGameCommonOptions):
     start_inventory_from_pool: StartInventoryPool
     starting_pet_slots: StartingPetSlots
     pet_slot_items: PetSlotItems
+    death_link: DeathLink
+    death_link_amnesty: DeathLinkAmnesty
+    death_link_effect: DeathLinkEffect
+
 
 insaniquarium_option_groups = [
     OptionGroup("Victory Conditions", [
@@ -203,5 +230,10 @@ insaniquarium_option_groups = [
         AlienAttackTrapWeight,
         FamineTrapWeight,
     ]),
+    OptionGroup("Death Link", [
+        DeathLink,
+        DeathLinkAmnesty,
+        DeathLinkEffect,
+    ], start_collapsed=True),
 ]
 

@@ -10,7 +10,6 @@ GAME_NAME = "Insaniquarium Deluxe"
 WORLD_VERSION = "world_version"
 
 from .data import item_data, location_data
-from .container import InsaniquariumContainer
 from .data.item_data import InsaniquariumItem, ITEM_DATA, InsaniquariumItemData
 from .options import InsaniquariumOptions, StartingTank, insaniquarium_option_groups
 from .regions import regions
@@ -152,15 +151,9 @@ class InsaniquariumWorld(World):
             "upgrade_availability": int(self.options.upgrade_availability),
             "aliensanity": bool(self.options.aliensanity),
             "starting_pet_slots": int(self.options.starting_pet_slots),
-            "bonus_pet_locations": int(self.options.bonus_pet_locations)
+            "bonus_pet_locations": int(self.options.bonus_pet_locations),
+            "death_link": bool(self.options.death_link.value),
+            "death_link_amnesty": int(self.options.death_link_amnesty.value),
+            "death_link_effect": int(self.options.death_link_effect.value),
+
         }
-
-    def generate_output(self, output_directory: str) -> None:
-        container = InsaniquariumContainer(
-            output_directory=output_directory,
-            player=self.player,
-            player_name=self.multiworld.get_file_safe_player_name(self.player),
-            world=self,
-        )
-        container.write()
-

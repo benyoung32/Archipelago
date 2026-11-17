@@ -1,4 +1,4 @@
-# Insaniquarium Deluxe Archipelago Setup Guide
+# Setup Guide
 
 ## Required Software
 
@@ -17,15 +17,13 @@
 1. Download `Insaniquarium Deluxe.yaml`
 2. Edit your desired options, save, and move the yaml file in your Players folder
 3. Generate using the Archipelago Launcher interface
-4. Inside the AP output file you will receive an `.apinsani` patch file containing the information needed by the client
 
 ## Playing
 
 1. Launch **Insaniquarium Deluxe.exe** from inside the `winfish-source` after copying in the necessary asset folders
 2. From the main menu, go to the profile selection screen
-3. Click the **Import** button
-4. Select your generated `.apinsani` patch file
-5. Enter your Archipelago connection information:
+3. Click the `add new connection` button
+4. Enter your Archipelago connection information:
    - **Server / Host**: Host address and port (e.g., `archipelago.gg:38281` or `localhost:38281`)
    - **Slot Name**: The player name specified in your configuration YAML (`name: Player1`).
    - **Password**: Password for the room (leave blank if none)
