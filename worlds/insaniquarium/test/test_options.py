@@ -90,8 +90,9 @@ class TestTrapChance100(InsaniquariumTestBase):
 class TestMinimalLocations(InsaniquariumTestBase):
     auto_construct = False
     options = {
-        "egg_pieces_per_level": 1,
+        "egg_pieces_per_level": 2,
         "include_time_trials": False,
+        "include_challenge_mode": False,
         "bonus_pet_locations": 0,
         "aliensanity": False,
     }

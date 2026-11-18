@@ -34,37 +34,12 @@ game: Insaniquarium Deluxe
 requires:
   version: 0.6.7 # Version of Archipelago required for this yaml to work as expected.
   game:
-    Insaniquarium Deluxe: 0.2.0 # Version of the world required for this yaml to work as expected.
+    Insaniquarium Deluxe: 0.3.0 # Version of the world required for this yaml to work as expected.
 
 Insaniquarium Deluxe:
   ################
   # Game Options #
   ################
-  progression_balancing:
-    # A system that can move progression earlier, to try and prevent the player from getting stuck and bored early.
-    # 
-    # A lower setting means more getting stuck. A higher setting means less getting stuck.
-    #
-    # You can define additional values between the minimum and maximum values.
-    # Minimum value is 0
-    # Maximum value is 99
-    random: 0
-    random-low: 0 # random value weighted towards lower values
-    random-high: 0 # random value weighted towards higher values
-    random-range-0-99: 0 # random value between 0 and 99
-    disabled: 0 # equivalent to 0
-    normal: 50 # equivalent to 50
-    extreme: 0 # equivalent to 99
-
-  accessibility:
-    # Set rules for reachability of your items/locations.
-    # 
-    # **Full:** ensure everything can be reached and acquired.
-    # 
-    # **Minimal:** ensure what is needed to reach your goal can be acquired.
-    full: 50
-    minimal: 0
-
   starting_tank:
     # Choose which tank you start with.
     # Randomized: A random tank unlock (Tank 1 through 4) is given as starting inventory.
@@ -77,7 +52,7 @@ Insaniquarium Deluxe:
 
   upgrade_availability:
     # Choose when received upgrade items are available during each level
-    # 0: Upgrades are immediately applied once recevied
+    # 0: Upgrades are immediately applied once received
     # 1: Upgrades are available for free once received
     # 2: Upgrades are available for normal price once received
     always: 0
@@ -114,7 +89,7 @@ Insaniquarium Deluxe:
   # Victory Conditions #
   ######################
   cyrax_required:
-    # Choose if cyrax is necessary to win.
+    # Choose if Cyrax is necessary to win.
     'false': 0
     'true': 50
 
@@ -133,14 +108,13 @@ Insaniquarium Deluxe:
   ######################
   egg_pieces_per_level:
     # Choose how many egg purchases in each level provide an Archipelago check.
-    # 1: Only the final egg piece is a check (20 level checks).
     # 2: Egg pieces 1 and 3 are checks (40 level checks).
     # 3: All 3 egg pieces in every level are checks (60 level checks).
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 2
     # Maximum value is 3
-    5: 50
+    3: 50
     random: 0
     random-low: 0 # random value weighted towards lower values
     random-high: 0 # random value weighted towards higher values
@@ -174,6 +148,12 @@ Insaniquarium Deluxe:
 
   aliensanity:
     # Choose if defeating aliens for the first time is a check
+    'false': 0
+    'true': 50
+
+  alien_randomization:
+    # Randomize which tanks each alien appears in.
+    # Each tank will contain 3-4 aliens, and each alien will appear in at least 2 tanks.
     'false': 0
     'true': 50
 
@@ -213,7 +193,7 @@ Insaniquarium Deluxe:
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 0
     # Maximum value is 100
-    10: 50
+    20: 50
     random: 0
     random-low: 0 # random value weighted towards lower values
     random-high: 0 # random value weighted towards higher values

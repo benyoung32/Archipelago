@@ -1,5 +1,3 @@
-# Setup Guide
-
 ## Required Software
 
 - **Insaniquarium Deluxe** (Disk or Steam version)
@@ -16,13 +14,13 @@
 
 1. Download `Insaniquarium Deluxe.yaml`
 2. Edit your desired options, save, and move the yaml file in your Players folder
-3. Generate using the Archipelago Launcher interface
+3. Generate APWorld using the Archipelago Launcher interface
 
 ## Playing
 
 1. Launch **Insaniquarium Deluxe.exe** from inside the `winfish-source` after copying in the necessary asset folders
 2. From the main menu, go to the profile selection screen
-3. Click the `add new connection` button
+3. Click the `NEW CONNECTION` button
 4. Enter your Archipelago connection information:
    - **Server / Host**: Host address and port (e.g., `archipelago.gg:38281` or `localhost:38281`)
    - **Slot Name**: The player name specified in your configuration YAML (`name: Player1`).

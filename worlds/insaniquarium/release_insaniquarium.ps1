@@ -6,7 +6,7 @@
     Automates the release workflow for Insaniquarium Deluxe in Archipelago:
     1. Reads version and game metadata from archipelago.json.
     2. Auto-locates Python and builds the .apworld package (via build_insaniquarium.py).
-    3. Stages release assets (.apworld, Insaniquarium.yaml, APWorld source code zip, and WinFish code zip).
+    3. Stages release assets (.apworld, Insaniquarium.yaml, and WinFish code zip).
     4. Generates formatted markdown release notes tailored for Archipelago.
     5. Publishes a GitHub Release with assets attached using the GitHub CLI (gh).
 
@@ -88,6 +88,9 @@ param (
 )
 
 $ErrorActionPreference = "Stop"
+
+Add-Type -AssemblyName "System.IO.Compression.FileSystem" -ErrorAction SilentlyContinue
+Add-Type -AssemblyName "System.IO.Compression" -ErrorAction SilentlyContinue
 
 function Log-Info    ([string]$Msg) { Write-Host "[*] $Msg" -ForegroundColor Cyan }
 function Log-Success ([string]$Msg) { Write-Host "[+] $Msg" -ForegroundColor Green }
@@ -329,17 +332,17 @@ function Find-PythonExe {
     return "python"
 }
 
+$pythonExe = Find-PythonExe $Python
+Log-Info "Using Python:     $pythonExe"
+
 if (-not $SkipBuild) {
-    Log-Info "Locating Python and building APWorld package..."
+    Log-Info "Building APWorld package..."
     if (-not (Test-Path $buildScript)) {
         Log-Error "Build script not found: $buildScript"
         exit 1
     }
 
-    $pythonExe = Find-PythonExe $Python
-    Log-Info "Using Python:     $pythonExe"
-
-    & $pythonExe "$buildScript" --skip-generate
+    & $pythonExe "$buildScript" --skip-generate --no-install
 
     if ($LASTEXITCODE -ne 0 -or -not (Test-Path $apworldBuildPath)) {
         Log-Error "Failed to build APWorld package!"
@@ -370,15 +373,18 @@ if (-not (Test-Path $stagingDir)) {
 
 $stagedApworld = Join-Path $stagingDir "insaniquarium.apworld"
 $stagedYaml = Join-Path $stagingDir "Insaniquarium.yaml"
-$stagedSourceZip = Join-Path $stagingDir "insaniquarium-source-v$Version.zip"
 $stagedWinFishZip = Join-Path $stagingDir "winfish-source-v$Version.zip"
 $stagedReleaseNotes = Join-Path $stagingDir "release_notes.md"
 $stagedNotes = $stagedReleaseNotes
 
-# Clean up obsolete release.md if present from prior builds
+# Clean up obsolete release.md or old source zips if present from prior builds
 $obsoleteReleaseMd = Join-Path $stagingDir "release.md"
 if (Test-Path $obsoleteReleaseMd) {
     Remove-Item -Path $obsoleteReleaseMd -Force
+}
+$obsoleteSourceZip = Join-Path $stagingDir "insaniquarium-source-v$Version.zip"
+if (Test-Path $obsoleteSourceZip) {
+    Remove-Item -Path $obsoleteSourceZip -Force
 }
 
 Copy-Item -Path $apworldBuildPath -Destination $stagedApworld -Force
@@ -386,93 +392,6 @@ Copy-Item -Path $yamlSrcPath -Destination $stagedYaml -Force
 
 Log-Success "Staged apworld:    $stagedApworld ($((Get-Item $stagedApworld).Length.ToString('N0')) bytes)"
 Log-Success "Staged yaml:       $stagedYaml"
-
-# Build source code zip archive (following .apignore)
-Log-Info "Creating source code zip archive ($((Split-Path $stagedSourceZip -Leaf)))..."
-Add-Type -AssemblyName System.IO.Compression
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-
-if (Test-Path $stagedSourceZip) {
-    Remove-Item -Path $stagedSourceZip -Force
-}
-
-$apignorePath = Join-Path $worldDir ".apignore"
-$apIgnorePatterns = @(
-    '__pycache__',
-    '*.pyc',
-    '.git*',
-    '.apignore'
-)
-if (Test-Path $apignorePath) {
-    $rawApignore = Get-Content -Path $apignorePath -Encoding utf8
-    foreach ($line in $rawApignore) {
-        $t = $line.Trim()
-        if ($t -and -not $t.StartsWith('#')) {
-            $apIgnorePatterns += $t.TrimEnd('/')
-        }
-    }
-}
-
-function Test-ApIgnored {
-    param (
-        [string]$RelPath,
-        [string]$FileName,
-        [string[]]$Patterns
-    )
-    $normalizedRel = $RelPath -replace '\\', '/'
-    $parts = $normalizedRel.Split('/')
-    foreach ($p in $Patterns) {
-        $cleanPat = ($p.Trim() -replace '\\', '/').TrimEnd('/')
-        if ($cleanPat.StartsWith('!')) { continue }
-
-        foreach ($part in $parts) {
-            if ($part -like $cleanPat) {
-                return $true
-            }
-        }
-        if ($normalizedRel -like $cleanPat -or $normalizedRel -like "*/$cleanPat" -or $normalizedRel -like "$cleanPat/*" -or $normalizedRel -like "*/$cleanPat/*") {
-            return $true
-        }
-        if ($FileName -like $cleanPat) {
-            return $true
-        }
-    }
-    return $false
-}
-
-$zipStream = [System.IO.File]::Open($stagedSourceZip, [System.IO.FileMode]::Create)
-$archive = New-Object System.IO.Compression.ZipArchive($zipStream, [System.IO.Compression.ZipArchiveMode]::Create)
-
-try {
-    $allWorldFiles = Get-ChildItem -Path $worldDir -Recurse | Where-Object { -not $_.PSIsContainer }
-    $sourceFiles = @()
-
-    foreach ($file in $allWorldFiles) {
-        $rel = $file.FullName.Substring($worldDir.Length).TrimStart('\', '/')
-        if (-not (Test-ApIgnored -RelPath $rel -FileName $file.Name -Patterns $apIgnorePatterns)) {
-            $sourceFiles += @{ File = $file; Rel = $rel }
-        }
-    }
-
-    Log-Info "Found $($sourceFiles.Count) world files adhering to .apignore"
-
-    foreach ($item in $sourceFiles) {
-        # Use forward slashes inside zip for POSIX compatibility
-        $entryName = "insaniquarium/" + ($item.Rel -replace '\\', '/')
-        [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
-            $archive,
-            $item.File.FullName,
-            $entryName,
-            [System.IO.Compression.CompressionLevel]::Optimal
-        ) | Out-Null
-    }
-}
-finally {
-    $archive.Dispose()
-    $zipStream.Dispose()
-}
-
-Log-Success "Staged source zip: $stagedSourceZip ($((Get-Item $stagedSourceZip).Length.ToString('N0')) bytes)"
 
 # Build WinFish source code zip archive (following .gitignore)
 if ($resolvedWinFishDir -and -not $SkipWinFish) {
@@ -620,8 +539,7 @@ $patchNotesBlock
 
 ## Release Assets
 - **``insaniquarium.apworld``**: Archipelago game world package.
-- **``Insaniquarium.yaml``**: Player configuration YAML template.
-- **``insaniquarium-source-v$Version.zip``**: Source code of the Insaniquarium Deluxe world.$winFishAssetLine
+- **``Insaniquarium.yaml``**: Player configuration YAML template.$winFishAssetLine
 "@
 }
 
@@ -633,8 +551,7 @@ Log-Success "Generated release notes at $stagedReleaseNotes"
 # -----------------------------------------------------------------------------
 $releaseAssets = @(
     $stagedApworld,
-    $stagedYaml,
-    $stagedSourceZip
+    $stagedYaml
 )
 if (-not $SkipWinFish -and (Test-Path $stagedWinFishZip)) {
     $releaseAssets += $stagedWinFishZip
@@ -646,7 +563,6 @@ if ($LocalOnly) {
     Write-Host "Files prepared in: $stagingDir" -ForegroundColor Green
     Write-Host "  - insaniquarium.apworld"
     Write-Host "  - Insaniquarium.yaml"
-    Write-Host "  - insaniquarium-source-v$Version.zip"
     if (-not $SkipWinFish -and (Test-Path $stagedWinFishZip)) {
         Write-Host "  - $((Split-Path $stagedWinFishZip -Leaf))"
     }

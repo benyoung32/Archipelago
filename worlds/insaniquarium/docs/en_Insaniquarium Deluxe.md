@@ -19,10 +19,11 @@ Locations where you receive items include:
 - **Time Trials**: Optionally include 4 completion checks for beating each tank's Time Trial mode.
 - **Challenge Mode**: Optionally include 4 completion checks for beating each tank's Challenge Mode.
 - **Aliensanity**: Defeating each unique alien boss/type for the first time awards an item check.
+- **Alien Randomization**: Optionally randomizes which tanks each alien appears in.
 
 ## What is the goal of Insaniquarium Deluxe when randomized?
 
-The base requirement is always to complete all 4 Adventure Tanks. You can further customize your victory conditions in your YAML options:
+The base requirement is always to complete all 4 Adventure Tanks. Additional goals can be optionally added:
 
 - **Cyrax Required**: Choose whether you must defeat the final boss Cyrax.
 - **Time Trial Required**: Require completing all 4 Time Trials to win.
@@ -30,7 +31,7 @@ The base requirement is always to complete all 4 Adventure Tanks. You can furthe
 
 ## What traps can be sent to Insaniquarium Deluxe?
 
-If trap chance is enabled in your options, non-progression filler items may be replaced with:
+If trap chance is enabled in your options, filler items may be replaced with:
 
 - **Alien Attack Trap**: Immediately spawns an alien attack in your current tank.
 - **Famine Trap**: Instantly drops all fish in your tank into starvation.

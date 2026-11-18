@@ -45,14 +45,9 @@ class PetSlotItems(Range):
     range_end = 24
     default = 3
 
-# TODO: add mid level check option. 
-# 0 - none
-# 1 - one check when food upgrades are unlocked per level
-# 2 - one check when the egg is unlocked per level (plus above)
 
 class EggPiecesPerLevel(Range):
     """Choose how many egg purchases in each level provide an Archipelago check.
-    1: Only the final egg piece is a check (20 level checks).
     2: Egg pieces 1 and 3 are checks (40 level checks).
     3: All 3 egg pieces in every level are checks (60 level checks)."""
     display_name = "Egg Pieces per Level"
@@ -60,10 +55,9 @@ class EggPiecesPerLevel(Range):
     range_end = 3
     default = 3
 
-"Completing all 4 tanks is always a victory condition. Add extra conditions below."
 
 class CyraxRequired(DefaultOnToggle):
-    "Choose if cyrax is necessary to win."
+    "Choose if Cyrax is necessary to win."
     display_name = "Cyrax Required"
 
 class TimeTrialRequired(Toggle):
@@ -74,7 +68,7 @@ class ChallengeModeRequired(Toggle):
     "Choose if challenge mode is necessary to win."
     display_name = "Challenge Mode Required"
 
-# TODO: potentially add virtual tank win condition
+
 class BonusPetLocations(Range):
     """Choose how many bonus pets are location checks (0 to 4).
     0: Disables bonus pet checks.
@@ -85,9 +79,9 @@ class BonusPetLocations(Range):
     default = 0
 
 
-class UpgradeAvailbility(Choice):
+class UpgradeAvailability(Choice):
     """Choose when received upgrade items are available during each level
-    0: Upgrades are immediately applied once recevied
+    0: Upgrades are immediately applied once received
     1: Upgrades are available for free once received
     2: Upgrades are available for normal price once received"""
     display_name = "Upgrade Availability"
@@ -96,8 +90,6 @@ class UpgradeAvailbility(Choice):
     option_normal_price = 2
     default = 1
 
-# TODO: add more bonus items and options for bonus starting money. 
-# bonus shells for unlocking bonus pets can be an option
 class BonusShellsWeight(Range):
     """
     This is summed with other bonus item weights to determine the probability of receiving bonus money.
@@ -116,8 +108,7 @@ class BonusMoneyWeight(Range):
     range_end = 100
     default = 1
 
-# TODO: add option for altering bonus pet cost. by default they are 20k shells x 4 
-# this will need to be added to slot_data.json 
+
 class IncludeTimeTrials(DefaultOnToggle):
     """Include 4 Time Trial completion checks in the randomizer pool.
     NOTE: This option is overwritten by 'Time Trial Required' if enabled."""
@@ -132,16 +123,17 @@ class Aliensanity(DefaultOnToggle):
     """Choose if defeating aliens for the first time is a check"""
     display_name = "Aliensanity"
 
+class AlienRandomization(DefaultOnToggle):
+    """Randomize which tanks each alien appears in.
+    Each tank will contain 3-4 aliens, and each alien will appear in at least 2 tanks."""
+    display_name = "Alien Randomization"
+
 class TrapChance(Range):
     """Percentage chance to replace non-progression filler items with traps."""
     display_name = "Trap Chance"
     range_start = 0
     range_end = 100
-    default = 10
-
-
-# TODO: alien randomzier
-# each level Choose from the alien pool randomly (maybe there needs to be a difficulty rating)
+    default = 20
 
 class AlienAttackTrapWeight(Range):
     """Relative weight of Alien Attack Traps when a trap is selected."""
@@ -162,7 +154,6 @@ class FamineTrapWeight(Range):
 class DeathLink(BaseDeathLink):
     """When enough of your fish die, a Death Link is sent to everyone who enabled death link.
     If another player dies, you will receive a death link penalty in your current tank."""
-
 
 class DeathLinkAmnesty(Range):
     """Number of fish that must die in your tank before sending a Death Link to other players."""
@@ -190,13 +181,14 @@ class InsaniquariumOptions(PerGameCommonOptions):
     cyrax_required: CyraxRequired
     time_trial_required: TimeTrialRequired
     challenge_mode_required: ChallengeModeRequired
-    upgrade_availability: UpgradeAvailbility
+    upgrade_availability: UpgradeAvailability
     bonus_shells_weight: BonusShellsWeight
     bonus_money_weight: BonusMoneyWeight
     include_time_trials: IncludeTimeTrials
     include_challenge_mode: IncludeChallengeMode
     bonus_pet_locations: BonusPetLocations
     aliensanity: Aliensanity
+    alien_randomization: AlienRandomization
     trap_chance: TrapChance
     alien_attack_trap_weight: AlienAttackTrapWeight
     famine_trap_weight: FamineTrapWeight
@@ -209,6 +201,12 @@ class InsaniquariumOptions(PerGameCommonOptions):
 
 
 insaniquarium_option_groups = [
+    OptionGroup("Game Options", [
+        StartingTank,
+        UpgradeAvailability,
+        StartingPetSlots,
+        PetSlotItems,
+    ]),
     OptionGroup("Victory Conditions", [
         CyraxRequired,
         TimeTrialRequired,
@@ -220,6 +218,7 @@ insaniquarium_option_groups = [
         IncludeChallengeMode,
         BonusPetLocations,
         Aliensanity,
+        AlienRandomization,
     ]),
     OptionGroup("Bonus Items", [ 
         BonusShellsWeight,
@@ -236,4 +235,3 @@ insaniquarium_option_groups = [
         DeathLinkEffect,
     ], start_collapsed=True),
 ]
-

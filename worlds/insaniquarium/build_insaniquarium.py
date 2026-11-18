@@ -40,27 +40,7 @@ def get_default_ap_dir() -> pathlib.Path:
     return program_data_ap
 
 
-def build_apworld(world_dir: pathlib.Path, output_path: pathlib.Path) -> pathlib.Path:
-    log("Building insaniquarium.apworld...")
-
-    manifest_file = world_dir / "archipelago.json"
-    if not manifest_file.is_file():
-        raise FileNotFoundError(f"Manifest not found: {manifest_file}")
-
-    with open(manifest_file, "r", encoding="utf-8") as f:
-        manifest = json.load(f)
-
-    # Required APContainer version tags
-    manifest["version"] = 7
-    manifest["compatible_version"] = 7
-
-    # Ensure data package has __init__.py so zipimport treats it as a module
-    data_init = world_dir / "data" / "__init__.py"
-    if not data_init.is_file():
-        with open(data_init, "w", encoding="utf-8") as f:
-            f.write('"""Data package for Insaniquarium Deluxe world."""\n')
-
-    # Read ignore patterns
+def get_apignore_filter(world_dir: pathlib.Path):
     ignore_patterns = [
         "__pycache__", "*.pyc", "test", "test/*", "*.yaml", ".git*",
         "APDefinitions.h", "generate_data.py", ".apignore", "build_insaniquarium.*",
@@ -84,6 +64,30 @@ def build_apworld(world_dir: pathlib.Path, output_path: pathlib.Path) -> pathlib
                 return True
         return False
 
+    return is_ignored
+
+
+def build_apworld(world_dir: pathlib.Path, output_path: pathlib.Path) -> pathlib.Path:
+    log("Building insaniquarium.apworld...")
+
+    manifest_file = world_dir / "archipelago.json"
+    if not manifest_file.is_file():
+        raise FileNotFoundError(f"Manifest not found: {manifest_file}")
+
+    with open(manifest_file, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+
+    # Required APContainer version tags for .apworld archives
+    manifest["version"] = 7
+    manifest["compatible_version"] = 7
+
+    # Ensure data package has __init__.py so zipimport treats it as a module
+    data_init = world_dir / "data" / "__init__.py"
+    if not data_init.is_file():
+        with open(data_init, "w", encoding="utf-8") as f:
+            f.write('"""Data package for Insaniquarium Deluxe world."""\n')
+
+    is_ignored = get_apignore_filter(world_dir)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     manifest_bytes = json.dumps(manifest, indent=2).encode("utf-8")
 
@@ -109,13 +113,15 @@ def build_apworld(world_dir: pathlib.Path, output_path: pathlib.Path) -> pathlib
 
 def swap_into_launcher(apworld_path: pathlib.Path, ap_dir: pathlib.Path) -> None:
     log(f"Swapping APWorld into Archipelago Launcher at {ap_dir}...")
+    try:
+        custom_worlds_dir = ap_dir / "custom_worlds"
+        custom_worlds_dir.mkdir(parents=True, exist_ok=True)
 
-    custom_worlds_dir = ap_dir / "custom_worlds"
-    custom_worlds_dir.mkdir(parents=True, exist_ok=True)
-
-    dest_apworld = custom_worlds_dir / apworld_path.name
-    shutil.copy2(apworld_path, dest_apworld)
-    log_success(f"Installed to {dest_apworld}")
+        dest_apworld = custom_worlds_dir / apworld_path.name
+        shutil.copy2(apworld_path, dest_apworld)
+        log_success(f"Installed to {dest_apworld}")
+    except (PermissionError, OSError) as e:
+        log(f"Could not copy to {ap_dir} ({e}); skipping install to launcher.", prefix="[!]")
 
 
 def generate_templates(ap_dir: pathlib.Path, repo_root: pathlib.Path, world_dir: pathlib.Path) -> pathlib.Path:
@@ -151,12 +157,16 @@ def generate_templates(ap_dir: pathlib.Path, repo_root: pathlib.Path, world_dir:
                 f"Expected template '{game_name}.yaml' was not generated in {temp_path}."
             )
 
-        # 1. Copy into Archipelago Templates directory
-        templates_dir = ap_dir / "Players" / "Templates"
-        templates_dir.mkdir(parents=True, exist_ok=True)
-        dest_template = templates_dir / f"{game_name}.yaml"
-        shutil.copy2(generated_file, dest_template)
-        log_success(f"Updated template options in Archipelago at {dest_template}")
+        # 1. Copy into Archipelago Templates directory if writable
+        dest_template = generated_file
+        try:
+            templates_dir = ap_dir / "Players" / "Templates"
+            templates_dir.mkdir(parents=True, exist_ok=True)
+            dest_template = templates_dir / f"{game_name}.yaml"
+            shutil.copy2(generated_file, dest_template)
+            log_success(f"Updated template options in Archipelago at {dest_template}")
+        except (PermissionError, OSError) as e:
+            log(f"Could not write templates to {ap_dir} ({e}); skipping launcher template copy.", prefix="[!]")
 
         # 2. Copy into workspace
         workspace_yaml = world_dir / "Insaniquarium.yaml"
@@ -166,16 +176,19 @@ def generate_templates(ap_dir: pathlib.Path, repo_root: pathlib.Path, world_dir:
         # 3. Copy any generated presets
         temp_presets = temp_path / "Presets"
         if temp_presets.is_dir():
-            ap_presets = templates_dir / "Presets"
+            ap_presets = ap_dir / "Players" / "Templates" / "Presets"
             workspace_presets = world_dir / "Presets"
             for preset in temp_presets.glob(f"{game_name} - *.yaml"):
-                ap_presets.mkdir(parents=True, exist_ok=True)
+                try:
+                    ap_presets.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(preset, ap_presets / preset.name)
+                except (PermissionError, OSError):
+                    pass
                 workspace_presets.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(preset, ap_presets / preset.name)
                 shutil.copy2(preset, workspace_presets / preset.name)
                 log_success(f"Synchronized preset: {preset.name}")
 
-    return dest_template
+    return workspace_yaml
 
 
 def run_generation(ap_dir: pathlib.Path, yaml_to_use: pathlib.Path, repo_root: pathlib.Path) -> None:
@@ -234,12 +247,6 @@ def run_generation(ap_dir: pathlib.Path, yaml_to_use: pathlib.Path, repo_root: p
         log_success(f"Generated seed archive: {latest_zip.name}")
         print(f"       Path: {latest_zip}")
 
-        # Verify apinsani inside
-        with zipfile.ZipFile(latest_zip, "r") as zf:
-            apinsani_files = [f for f in zf.namelist() if f.endswith(".apinsani")]
-            for apinsani in apinsani_files:
-                print(f"       \033[1;32m[+]\033[0m Included container: {apinsani}")
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(
@@ -256,6 +263,11 @@ def main() -> None:
         type=pathlib.Path,
         default=None,
         help="Optional path to custom player YAML to generate with (default: auto-generated template)",
+    )
+    parser.add_argument(
+        "--no-install",
+        action="store_true",
+        help="Skip copying the apworld and templates into the Archipelago Launcher directory.",
     )
     parser.add_argument(
         "--skip-generate",
@@ -279,7 +291,8 @@ def main() -> None:
     build_apworld(world_dir, build_output)
 
     # 2. Swap into Launcher
-    swap_into_launcher(build_output, args.ap_dir)
+    if not args.no_install:
+        swap_into_launcher(build_output, args.ap_dir)
 
     # 3. Auto-generate template options using Options.generate_yaml_templates and sync
     generated_template = generate_templates(args.ap_dir, repo_root, world_dir)
