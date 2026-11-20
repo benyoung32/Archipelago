@@ -37,7 +37,8 @@ class APItem(enum.IntEnum):
     PET_SLOT = 102
     STARTING_MONEY = 103
     WEAPON_UPGRADE = 104
-    BONUS_SHELLS = 105
+    BONUS_LEVEL_TICKET = 105
+    BONUS_STARTING_GUPPY = 106
     STINKY = 201
     NIKO = 202
     ITCHY = 203
@@ -76,7 +77,8 @@ FOOD_QUANTITY = "Food Quantity Upgrade"
 PET_SLOT = "Pet Slot Upgrade"
 STARTING_MONEY = "Starting Money +100"
 WEAPON_UPGRADE = "Progressive Weapon Upgrade"
-BONUS_SHELLS = "Bonus Shells"
+BONUS_LEVEL_TICKET = "Bonus Level Ticket"
+BONUS_STARTING_GUPPY = "Bonus Starting Guppy"
 STINKY = "Stinky the Snail"
 NIKO = "Niko the Oyster"
 ITCHY = "Itchy the Swordfish"
@@ -114,8 +116,9 @@ ITEM_DATA: dict[str, InsaniquariumItemData] = {
     "Food Quantity Upgrade": InsaniquariumItemData(IC.useful, 8, 101, "Upgrade"),
     "Pet Slot Upgrade": InsaniquariumItemData(IC.progression, 0, 102, "Upgrade"),
     "Starting Money +100": InsaniquariumItemData(IC.filler, 0, 103, "Bonus"),
-    "Progressive Weapon Upgrade": InsaniquariumItemData(IC.progression, 10, 104, "Upgrade"),
-    "Bonus Shells": InsaniquariumItemData(IC.filler, 0, 105, "Bonus"),
+    "Progressive Weapon Upgrade": InsaniquariumItemData(IC.useful, 10, 104, "Upgrade"),
+    "Bonus Level Ticket": InsaniquariumItemData(IC.filler, 0, 105, "Bonus"),
+    "Bonus Starting Guppy": InsaniquariumItemData(IC.filler, 0, 106, "Bonus"),
     "Stinky the Snail": InsaniquariumItemData(IC.useful, 1, 201, "Pet"),
     "Niko the Oyster": InsaniquariumItemData(IC.useful, 1, 202, "Pet"),
     "Itchy the Swordfish": InsaniquariumItemData(IC.useful, 1, 203, "Pet"),

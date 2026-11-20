@@ -90,23 +90,35 @@ class UpgradeAvailability(Choice):
     option_normal_price = 2
     default = 1
 
-class BonusShellsWeight(Range):
+class BonusLevelTicketWeight(Range):
     """
-    This is summed with other bonus item weights to determine the probability of receiving bonus money.
+    This is summed with other bonus item weights to determine the probability 
+    of receiving extra bonus levels.
     """
-    display_name = "Bonus Shells Weight"
+    display_name = "Bonus Level Ticket Weight"
     range_start = 0
     range_end = 100
-    default = 0
+    default = 10
 
 class BonusMoneyWeight(Range):
     """
-    This is summed with other bonus item weights to determine the probability of receiving bonus money.
+    This is summed with other bonus item weights to determine the probability 
+    of receiving bonus money.
     """
     display_name = "Bonus Money Weight"
     range_start = 1
     range_end = 100
-    default = 1
+    default = 50
+
+class BonusStartingGuppyWeight(Range):
+    """
+    This is summed with other bonus item weights to determine the probability 
+    of receiving a bonus starting guppy.
+    """
+    display_name = "Bonus Starting Guppy"
+    range_start = 0
+    range_end = 100
+    default = 10
 
 
 class IncludeTimeTrials(DefaultOnToggle):
@@ -159,15 +171,13 @@ class DeathLinkAmnesty(Range):
     """Number of fish that must die in your tank before sending a Death Link to other players."""
     display_name = "Death Link Fish Threshold"
     range_start = 1
-    range_end = 50
-    default = 3
-
+    range_end = 100
+    default = 10
 
 class DeathLinkEffect(Choice):
     """Choose what happens when you receive a Death Link from another player.
     Kill All Fish: Instantly kills all fish currently in your tank.
-    Activate Trap: Triggers a random trap.
-    Random: Randomly chooses between killing all fish or triggering a trap."""
+    Activate Trap: Queues a random trap."""
     display_name = "Death Link Receive Effect"
     option_kill_all_fish = 0
     option_activate_trap = 1
@@ -182,8 +192,9 @@ class InsaniquariumOptions(PerGameCommonOptions):
     time_trial_required: TimeTrialRequired
     challenge_mode_required: ChallengeModeRequired
     upgrade_availability: UpgradeAvailability
-    bonus_shells_weight: BonusShellsWeight
+    bonus_level_ticket_weight: BonusLevelTicketWeight
     bonus_money_weight: BonusMoneyWeight
+    bonus_starting_guppy_weight: BonusStartingGuppyWeight
     include_time_trials: IncludeTimeTrials
     include_challenge_mode: IncludeChallengeMode
     bonus_pet_locations: BonusPetLocations
@@ -221,8 +232,9 @@ insaniquarium_option_groups = [
         AlienRandomization,
     ]),
     OptionGroup("Bonus Items", [ 
-        BonusShellsWeight,
+        BonusStartingGuppyWeight,
         BonusMoneyWeight,
+        BonusLevelTicketWeight,
     ]),
     OptionGroup("Traps", [
         TrapChance,

@@ -11,6 +11,7 @@
 
 ### New YAML Options
 
+- **Bonus Starting Guppy** (`bonus_starting_guppy_weight`) - Configures the probability of receiving a bonus starting guppy as a filler item.
 - **Death Link** (`death_link`) - Toggle Death Link integration. Now your friends can share in the insanity!
 - **Death Link Fish Amnesty** (`death_link_amnesty`) - Configures how many fish must die before sending a Death Link.
 - **Death Link Receive Effect** (`death_link_effect`) - Configures the penalty when receiving a Death Link (kill all fish or activate trap)

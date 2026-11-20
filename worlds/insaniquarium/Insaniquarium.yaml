@@ -160,29 +160,44 @@ Insaniquarium Deluxe:
   ###############
   # Bonus Items #
   ###############
-  bonus_shells_weight:
-    # This is summed with other bonus item weights to determine the probability of receiving bonus money.
+  bonus_starting_guppy_weight:
+    # This is summed with other bonus item weights to determine the probability 
+    # of receiving a bonus starting guppy.
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 0
     # Maximum value is 100
-    0: 50
+    10: 50
     random: 0
     random-low: 0 # random value weighted towards lower values
     random-high: 0 # random value weighted towards higher values
     random-range-0-100: 0 # random value between 0 and 100
 
   bonus_money_weight:
-    # This is summed with other bonus item weights to determine the probability of receiving bonus money.
+    # This is summed with other bonus item weights to determine the probability 
+    # of receiving bonus money.
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 1
     # Maximum value is 100
-    1: 50
+    50: 50
     random: 0
     random-low: 0 # random value weighted towards lower values
     random-high: 0 # random value weighted towards higher values
     random-range-1-100: 0 # random value between 1 and 100
+
+  bonus_level_ticket_weight:
+    # This is summed with other bonus item weights to determine the probability 
+    # of receiving extra bonus levels.
+    #
+    # You can define additional values between the minimum and maximum values.
+    # Minimum value is 0
+    # Maximum value is 100
+    10: 50
+    random: 0
+    random-low: 0 # random value weighted towards lower values
+    random-high: 0 # random value weighted towards higher values
+    random-range-0-100: 0 # random value between 0 and 100
 
   #########
   # Traps #
@@ -237,12 +252,12 @@ Insaniquarium Deluxe:
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 1
-    # Maximum value is 50
-    3: 50
+    # Maximum value is 100
+    10: 50
     random: 0
     random-low: 0 # random value weighted towards lower values
     random-high: 0 # random value weighted towards higher values
-    random-range-1-50: 0 # random value between 1 and 50
+    random-range-1-100: 0 # random value between 1 and 100
 
   death_link_effect:
     # Choose what happens when you receive a Death Link from another player.

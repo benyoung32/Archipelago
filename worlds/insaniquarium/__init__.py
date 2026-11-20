@@ -125,7 +125,8 @@ class InsaniquariumWorld(World):
         
         filler: dict[str, int] = {
             item_data.STARTING_MONEY: self.options.bonus_money_weight.value,
-            item_data.BONUS_SHELLS: self.options.bonus_shells_weight.value,
+            item_data.BONUS_LEVEL_TICKET: self.options.bonus_level_ticket_weight.value,
+            item_data.BONUS_STARTING_GUPPY: self.options.bonus_starting_guppy_weight.value,
         }
 
         # Determine if pulling from trap or filler pool

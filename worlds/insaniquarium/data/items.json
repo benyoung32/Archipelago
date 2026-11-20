@@ -67,14 +67,22 @@
     "id": 104,
     "code_name": "WEAPON_UPGRADE",
     "name": "Progressive Weapon Upgrade",
-    "classification": "progression",
+    "classification": "useful",
     "quantity": 10,
     "category": "Upgrade"
   },
   {
     "id": 105,
-    "code_name": "BONUS_SHELLS",
-    "name": "Bonus Shells",
+    "code_name": "BONUS_LEVEL_TICKET",
+    "name": "Bonus Level Ticket",
+    "classification": "filler",
+    "quantity": 0,
+    "category": "Bonus"
+  },
+  {
+    "id": 106,
+    "code_name": "BONUS_STARTING_GUPPY",
+    "name": "Bonus Starting Guppy",
     "classification": "filler",
     "quantity": 0,
     "category": "Bonus"
