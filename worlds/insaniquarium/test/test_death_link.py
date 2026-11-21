@@ -8,7 +8,7 @@ class TestDeathLinkDefault(InsaniquariumTestBase):
         self.assertIn("death_link", slot_data)
         self.assertFalse(slot_data["death_link"])
         self.assertIn("death_link_amnesty", slot_data)
-        self.assertEqual(slot_data["death_link_amnesty"], 3)
+        self.assertEqual(slot_data["death_link_amnesty"], 10)
         self.assertIn("death_link_effect", slot_data)
         self.assertEqual(slot_data["death_link_effect"], DeathLinkEffect.option_kill_all_fish)
 

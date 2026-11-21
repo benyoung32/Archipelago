@@ -1,5 +1,6 @@
 from . import InsaniquariumTestBase
 from ..data.item_data import (
+    BONUS_STARTING_GUPPY,
     STARTING_MONEY,
     TRAP_ALIEN_ATTACK,
     TRAP_FAMINE,
@@ -85,6 +86,29 @@ class TestTrapChance100(InsaniquariumTestBase):
         trap_count = itempool_names.count(TRAP_ALIEN_ATTACK) + itempool_names.count(TRAP_FAMINE)
         self.assertGreater(trap_count, 0)
         self.assertEqual(len(self.multiworld.itempool), len(self.multiworld.get_unfilled_locations(self.player)))
+
+
+class TestBonusStartingGuppiesDisabled(InsaniquariumTestBase):
+    options = {
+        "bonus_starting_guppies": 0,
+        "trap_chance": 0,
+    }
+
+    def test_no_bonus_starting_guppies_when_zero(self) -> None:
+        itempool_names = [item.name for item in self.multiworld.itempool]
+        self.assertEqual(itempool_names.count(BONUS_STARTING_GUPPY), 0)
+
+
+class TestBonusStartingGuppiesCapped(InsaniquariumTestBase):
+    options = {
+        "bonus_starting_guppies": 4,
+        "trap_chance": 0,
+    }
+
+    def test_bonus_starting_guppies_never_exceeds_max(self) -> None:
+        itempool_names = [item.name for item in self.multiworld.itempool]
+        guppy_count = itempool_names.count(BONUS_STARTING_GUPPY)
+        self.assertLessEqual(guppy_count, 4)
 
 
 class TestMinimalLocations(InsaniquariumTestBase):
