@@ -110,15 +110,16 @@ class BonusMoneyWeight(Range):
     range_end = 100
     default = 50
 
-class BonusStartingGuppyWeight(Range):
+class BonusStartingGuppies(Range):
     """
-    This is summed with other bonus item weights to determine the probability 
-    of receiving a bonus starting guppy.
+    Maximum number of Bonus Starting Guppies that can be included in the filler pool.
+    Each filler item has a 50% chance of being a Bonus Starting Guppy until this maximum is reached.
+    Remaining filler items will fall back to the other bonus item pool.
     """
-    display_name = "Bonus Starting Guppy"
+    display_name = "Bonus Starting Guppies"
     range_start = 0
-    range_end = 100
-    default = 10
+    range_end = 10
+    default = 5
 
 
 class IncludeTimeTrials(DefaultOnToggle):
@@ -194,7 +195,7 @@ class InsaniquariumOptions(PerGameCommonOptions):
     upgrade_availability: UpgradeAvailability
     bonus_level_ticket_weight: BonusLevelTicketWeight
     bonus_money_weight: BonusMoneyWeight
-    bonus_starting_guppy_weight: BonusStartingGuppyWeight
+    bonus_starting_guppies: BonusStartingGuppies
     include_time_trials: IncludeTimeTrials
     include_challenge_mode: IncludeChallengeMode
     bonus_pet_locations: BonusPetLocations
@@ -232,7 +233,7 @@ insaniquarium_option_groups = [
         AlienRandomization,
     ]),
     OptionGroup("Bonus Items", [ 
-        BonusStartingGuppyWeight,
+        BonusStartingGuppies,
         BonusMoneyWeight,
         BonusLevelTicketWeight,
     ]),

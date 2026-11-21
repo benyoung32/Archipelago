@@ -50,12 +50,14 @@ class InsaniquariumWorld(World):
     starting_item_names: list[str] = []
     alien_regions: dict[str, list[str]] = {}
     alien_to_tanks: dict[InsaniquariumLocationData, list[str]] = {}
+    bonus_starting_guppies_created: int = 0
 
     def generate_early(self) -> None:
         """
         Pre-places starting items before the rest of generation to keep things in logic and
         duplicates out of the item pool.
         """
+        self.bonus_starting_guppies_created = 0
         tank_map = {
             StartingTank.option_tank_1: item_data.TANK_1_UNLOCK,
             StartingTank.option_tank_2: item_data.TANK_2_UNLOCK,
@@ -126,9 +128,14 @@ class InsaniquariumWorld(World):
         filler: dict[str, int] = {
             item_data.STARTING_MONEY: self.options.bonus_money_weight.value,
             item_data.BONUS_LEVEL_TICKET: self.options.bonus_level_ticket_weight.value,
-            item_data.BONUS_STARTING_GUPPY: self.options.bonus_starting_guppy_weight.value,
+            item_data.BONUS_STARTING_GUPPY: 
+            self.options.bonus_money_weight.value + self.options.bonus_level_ticket_weight.value,
         }
 
+        # If we've already placed all bonus starting guppies, remove them from the pool
+        if self.bonus_starting_guppies_created >= self.options.bonus_starting_guppies.value:
+            filler[item_data.BONUS_STARTING_GUPPY] = 0
+        
         # Determine if pulling from trap or filler pool
         if sum(traps.values()) > 0 and self.random.randint(1, 100) <= trap_chance:
             pool = traps

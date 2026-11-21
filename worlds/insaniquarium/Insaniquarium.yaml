@@ -160,18 +160,18 @@ Insaniquarium Deluxe:
   ###############
   # Bonus Items #
   ###############
-  bonus_starting_guppy_weight:
-    # This is summed with other bonus item weights to determine the probability 
-    # of receiving a bonus starting guppy.
+  bonus_starting_guppies:
+    # Sets the maximum number of bonus starting guppies included in the filler pool.
+    # Each filler item has a 50% chance of being a bonus starting guppy until this maximum is reached.
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 0
-    # Maximum value is 100
-    10: 50
+    # Maximum value is 10
+    5: 50
     random: 0
     random-low: 0 # random value weighted towards lower values
     random-high: 0 # random value weighted towards higher values
-    random-range-0-100: 0 # random value between 0 and 100
+    random-range-0-10: 0 # random value between 0 and 10
 
   bonus_money_weight:
     # This is summed with other bonus item weights to determine the probability 
@@ -262,8 +262,7 @@ Insaniquarium Deluxe:
   death_link_effect:
     # Choose what happens when you receive a Death Link from another player.
     # Kill All Fish: Instantly kills all fish currently in your tank.
-    # Activate Trap: Triggers a random trap.
-    # Random: Randomly chooses between killing all fish or triggering a trap.
+    # Activate Trap: Queues a random trap.
     kill_all_fish: 50
     activate_trap: 0
 

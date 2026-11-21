@@ -105,7 +105,7 @@
     "code_name": "CHALLENGE_1_COMPLETE",
     "name": "Challenge 1 Complete",
     "region": "Tank 1",
-    "classification": "Priority"
+    "classification": "Default"
   },
   {
     "code_name": "TANK_2_COMPLETE",
@@ -213,7 +213,7 @@
     "code_name": "CHALLENGE_2_COMPLETE",
     "name": "Challenge 2 Complete",
     "region": "Tank 2",
-    "classification": "Priority"
+    "classification": "Default"
   },
   {
     "code_name": "TANK_3_COMPLETE",
@@ -321,7 +321,7 @@
     "code_name": "CHALLENGE_3_COMPLETE",
     "name": "Challenge 3 Complete",
     "region": "Tank 3",
-    "classification": "Priority"
+    "classification": "Default"
   },
   {
     "code_name": "TANK_4_COMPLETE",
@@ -429,7 +429,7 @@
     "code_name": "CHALLENGE_4_COMPLETE",
     "name": "Challenge 4 Complete",
     "region": "Tank 4",
-    "classification": "Priority"
+    "classification": "Default"
   },
   {
     "code_name": "CYRAX",

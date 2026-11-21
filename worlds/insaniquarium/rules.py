@@ -19,7 +19,6 @@ ALL_TANK_UNLOCKS = {
     TANK_4_UNLOCK,
 }
 
-
 class InsaniquariumRules:
     """Applies logic to this world's regions, locations, and completion condition."""
 
@@ -47,6 +46,19 @@ class InsaniquariumRules:
             tank_5_entrance,
             lambda state: state.has_all(ALL_TANK_UNLOCKS, world.player),
         )
+
+        # Challenge Mode locations (Challenges 1-4) require unlocking all 4 adventure tanks
+        if world.options.include_challenge_mode or world.options.challenge_mode_required:
+            for t in range(1, 5):
+                loc_name = f"Challenge {t} Complete"
+                try:
+                    challenge_loc = world.get_location(loc_name)
+                    world.set_rule(
+                        challenge_loc,
+                        lambda state: state.has_all(ALL_TANK_UNLOCKS, world.player),
+                    )
+                except KeyError:
+                    pass
 
         # Completion Condition:
         # Completing all 4 tanks is always a victory condition. Extra conditions are configured via options.
