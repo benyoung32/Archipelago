@@ -15,7 +15,7 @@ Locations where you receive items include:
 
 - **Egg Purchases**: In each level purchasing egg pieces awards an Archipelago check. You can configure whether checks are awarded for only the final egg piece (20 checks), two pieces (40 checks), or all 3 egg pieces per level (60 checks).
 - **Tank Clears**: Defeating each tank's final boss or completing its last level awards a completion check (`Tank 1 Complete` through `Tank 4 Complete`).
-- **Bonus Pets**: Purchasing the 4 bonus pets (`Bonus Pet 1` through `Bonus Pet 4`) can optionally be included as check locations.
+- **Bonus Pets**: Purchasing the 4 bonus pets (`Bonus Pet 1` through `Bonus Pet 4`) can optionally be included as non-filler locations.
 - **Time Trials**: Optionally include 4 completion checks for beating each tank's Time Trial mode.
 - **Challenge Mode**: Optionally include 4 completion checks for beating each tank's Challenge Mode.
 - **Aliensanity**: Defeating each unique alien boss/type for the first time awards an item check.

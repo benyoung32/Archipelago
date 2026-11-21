@@ -4,11 +4,12 @@
 - **Simplified Connection Process** - Removed the need to create and import a patch file per save. All option information is now handled by the connection handshake between client and server
 - **Bigger windowed mode** - Added a 2x scale option to the pause menu to make the game more playable in windowed mode! Still research to be done for borderless windowed mode  
 - **Autofire Setting** - Wrist getting tired? New check box added to the pause menu to enable the rapid fire weapon mode which is typically locked to the max weapon upgrade
+- **Info Page** - New GUI page added to the client to track remaining checks, received items, and goal progress
 
 ### Changes
 
 - **Priority Locations** - Tank completions are now marked as priority to make progression items more likely to show up in exciting places. Aliens are also priority if aliensanity is enabled.
-- **Bonus Shell Tickets** - The bonus shell filler item no longer just gives shells, it now gives a ticket to start a random tank's bonus round from the tank select. Gotta earn those shells!
+- **Bonus Shell Tickets** - The `bonus shell filler` item no longer just gives shells, it now gives a ticket to start a random tank's bonus round from the tank select. Gotta earn those shells!
 - **Bonus Pet Locations** (`bonus_pet_locations`) - Bonus pets are now always included as locations. This option now chooses how many bonus pet locations are allowed as default locations (can hold progression) vs filler only (0-4).
 
 ### New YAML Options
@@ -21,5 +22,4 @@
 
 ### Planned Features
 
-- **Info Page** - New GUI page added to the client to track remaining checks, received items, and goal progress
 - **Tracker integration** - Integrate APWorld with pop tracker
