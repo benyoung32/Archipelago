@@ -19,8 +19,8 @@ class TestExcludeTimeTrials(InsaniquariumTestBase):
         self.assertNotIn("Time Trial 2 Complete", loc_names)
         self.assertNotIn("Time Trial 3 Complete", loc_names)
         self.assertNotIn("Time Trial 4 Complete", loc_names)
-        self.assertEqual(len(unfilled_locs), 76)
-        self.assertEqual(len(self.multiworld.itempool), 76)
+        self.assertEqual(len(unfilled_locs), 80)
+        self.assertEqual(len(self.multiworld.itempool), 80)
 
 
 class TestExcludeBonusPets(InsaniquariumTestBase):
@@ -29,14 +29,20 @@ class TestExcludeBonusPets(InsaniquariumTestBase):
     }
 
     def test_bonus_pets_excluded(self) -> None:
+        from BaseClasses import LocationProgressType
+
         unfilled_locs = self.multiworld.get_unfilled_locations(self.player)
         loc_names = {loc.name for loc in unfilled_locs}
-        self.assertNotIn("Bonus Pet 1", loc_names)
-        self.assertNotIn("Bonus Pet 2", loc_names)
-        self.assertNotIn("Bonus Pet 3", loc_names)
-        self.assertNotIn("Bonus Pet 4", loc_names)
-        self.assertEqual(len(unfilled_locs), 80)
-        self.assertEqual(len(self.multiworld.itempool), 80)
+        self.assertIn("Bonus Pet 1", loc_names)
+        self.assertIn("Bonus Pet 2", loc_names)
+        self.assertIn("Bonus Pet 3", loc_names)
+        self.assertIn("Bonus Pet 4", loc_names)
+        self.assertEqual(len(unfilled_locs), 84)
+        self.assertEqual(len(self.multiworld.itempool), 84)
+
+        for i in range(1, 5):
+            loc = self.multiworld.get_location(f"Bonus Pet {i}", self.player)
+            self.assertEqual(loc.progress_type, LocationProgressType.EXCLUDED)
 
 
 class TestPartialBonusPets(InsaniquariumTestBase):
@@ -45,14 +51,48 @@ class TestPartialBonusPets(InsaniquariumTestBase):
     }
 
     def test_partial_bonus_pets(self) -> None:
+        from BaseClasses import LocationProgressType
+
         unfilled_locs = self.multiworld.get_unfilled_locations(self.player)
         loc_names = {loc.name for loc in unfilled_locs}
         self.assertIn("Bonus Pet 1", loc_names)
         self.assertIn("Bonus Pet 2", loc_names)
-        self.assertNotIn("Bonus Pet 3", loc_names)
-        self.assertNotIn("Bonus Pet 4", loc_names)
-        self.assertEqual(len(unfilled_locs), 82)
-        self.assertEqual(len(self.multiworld.itempool), 82)
+        self.assertIn("Bonus Pet 3", loc_names)
+        self.assertIn("Bonus Pet 4", loc_names)
+        self.assertEqual(len(unfilled_locs), 84)
+        self.assertEqual(len(self.multiworld.itempool), 84)
+
+        self.assertEqual(
+            self.multiworld.get_location("Bonus Pet 1", self.player).progress_type,
+            LocationProgressType.DEFAULT,
+        )
+        self.assertEqual(
+            self.multiworld.get_location("Bonus Pet 2", self.player).progress_type,
+            LocationProgressType.DEFAULT,
+        )
+        self.assertEqual(
+            self.multiworld.get_location("Bonus Pet 3", self.player).progress_type,
+            LocationProgressType.EXCLUDED,
+        )
+        self.assertEqual(
+            self.multiworld.get_location("Bonus Pet 4", self.player).progress_type,
+            LocationProgressType.EXCLUDED,
+        )
+
+
+class TestAllBonusPetsDefault(InsaniquariumTestBase):
+    options = {
+        "bonus_pet_locations": 4,
+    }
+
+    def test_all_bonus_pets_default(self) -> None:
+        from BaseClasses import LocationProgressType
+
+        unfilled_locs = self.multiworld.get_unfilled_locations(self.player)
+        self.assertEqual(len(unfilled_locs), 84)
+        for i in range(1, 5):
+            loc = self.multiworld.get_location(f"Bonus Pet {i}", self.player)
+            self.assertEqual(loc.progress_type, LocationProgressType.DEFAULT)
 
 
 class TestAliensanity(InsaniquariumTestBase):
@@ -70,9 +110,9 @@ class TestAliensanity(InsaniquariumTestBase):
         self.assertNotIn("Defeat Psychosquid", loc_names)
         self.assertNotIn("Defeat Ulysses", loc_names)
         self.assertNotIn("Defeat Bilaterus", loc_names)
-        # 80 default - 7 alien checks = 73 locations
-        self.assertEqual(len(unfilled_locs), 73)
-        self.assertEqual(len(self.multiworld.itempool), 73)
+        # 84 default - 7 alien checks = 77 locations
+        self.assertEqual(len(unfilled_locs), 77)
+        self.assertEqual(len(self.multiworld.itempool), 77)
 
 
 class TestTrapChance100(InsaniquariumTestBase):

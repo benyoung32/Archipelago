@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from BaseClasses import Region
+from BaseClasses import LocationProgressType, Region
 
 from .data.location_data import (
     InsaniquariumLocation,
@@ -22,8 +22,6 @@ def is_location_enabled(world: InsaniquariumWorld, loc: InsaniquariumLocationDat
     if loc.is_time_trial and not (world.options.include_time_trials or world.options.time_trial_required):
         return False
     if loc.is_challenge and not (world.options.include_challenge_mode or world.options.challenge_mode_required):
-        return False
-    if loc.is_bonus_pet and loc.bonus_pet_index > world.options.bonus_pet_locations.value:
         return False
     if loc.is_alien and not world.options.aliensanity:
         return False
@@ -110,6 +108,18 @@ def create_regions(world: InsaniquariumWorld) -> None:
             regions[region_name] = region
 
         regions[region_name].add_locations(locations, InsaniquariumLocation)
+
+    # Configure progress type for bonus pet locations based on option:
+    # Bonus Pet 1 through N are allowed as default locations, while the rest are filler only (excluded).
+    for i in range(1, 5):
+        try:
+            bonus_pet_loc = world.get_location(f"Bonus Pet {i}")
+            if i <= world.options.bonus_pet_locations.value:
+                bonus_pet_loc.progress_type = LocationProgressType.DEFAULT
+            else:
+                bonus_pet_loc.progress_type = LocationProgressType.EXCLUDED
+        except KeyError:
+            pass
 
     # For alien randomization: create a sub-region for each alien check
     # and connect it from every tank the alien spawns in

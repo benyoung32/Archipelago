@@ -133,9 +133,9 @@ Insaniquarium Deluxe:
     'true': 50
 
   bonus_pet_locations:
-    # Choose how many bonus pets are location checks (0 to 4).
-    # 0: Disables bonus pet checks.
-    # 1-4: Bonus Pet 1 through the selected number are location checks.
+    # Choose how many bonus pet locations are allowed as default locations vs filler only (0 to 4).
+    # 0: All bonus pet checks are filler only.
+    # 1-4: Bonus Pet 1 through the selected number are default locations; remaining bonus pets are filler only.
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 0
@@ -161,8 +161,9 @@ Insaniquarium Deluxe:
   # Bonus Items #
   ###############
   bonus_starting_guppies:
-    # Sets the maximum number of bonus starting guppies included in the filler pool.
-    # Each filler item has a 50% chance of being a bonus starting guppy until this maximum is reached.
+    # Maximum number of Bonus Starting Guppies that can be included in the filler pool.
+    # Each filler item has a 50% chance of being a Bonus Starting Guppy until this maximum is reached.
+    # Remaining filler items will fall back to the other bonus item pool.
     #
     # You can define additional values between the minimum and maximum values.
     # Minimum value is 0

@@ -117,7 +117,7 @@ class InsaniquariumLocationData(enum.IntEnum):
     TANK_1_5_EGG_PIECE_2 = 15, "Tank 1-5 Egg Piece 2", "Tank 1", LocationProgressType.DEFAULT
     TANK_1_5_EGG_PIECE_3 = 16, "Tank 1-5 Egg Piece 3", "Tank 1", LocationProgressType.DEFAULT
     TIME_TRIAL_1_COMPLETE = 17, "Time Trial 1 Complete", "Tank 1", LocationProgressType.PRIORITY
-    CHALLENGE_1_COMPLETE = 18, "Challenge 1 Complete", "Tank 1", LocationProgressType.PRIORITY
+    CHALLENGE_1_COMPLETE = 18, "Challenge 1 Complete", "Tank 1", LocationProgressType.DEFAULT
     TANK_2_COMPLETE = 19, "Tank 2 Complete", "Tank 2", LocationProgressType.PRIORITY
     TANK_2_1_EGG_PIECE_1 = 20, "Tank 2-1 Egg Piece 1", "Tank 2", LocationProgressType.DEFAULT
     TANK_2_1_EGG_PIECE_2 = 21, "Tank 2-1 Egg Piece 2", "Tank 2", LocationProgressType.DEFAULT
@@ -135,7 +135,7 @@ class InsaniquariumLocationData(enum.IntEnum):
     TANK_2_5_EGG_PIECE_2 = 33, "Tank 2-5 Egg Piece 2", "Tank 2", LocationProgressType.DEFAULT
     TANK_2_5_EGG_PIECE_3 = 34, "Tank 2-5 Egg Piece 3", "Tank 2", LocationProgressType.DEFAULT
     TIME_TRIAL_2_COMPLETE = 35, "Time Trial 2 Complete", "Tank 2", LocationProgressType.DEFAULT
-    CHALLENGE_2_COMPLETE = 36, "Challenge 2 Complete", "Tank 2", LocationProgressType.PRIORITY
+    CHALLENGE_2_COMPLETE = 36, "Challenge 2 Complete", "Tank 2", LocationProgressType.DEFAULT
     TANK_3_COMPLETE = 37, "Tank 3 Complete", "Tank 3", LocationProgressType.PRIORITY
     TANK_3_1_EGG_PIECE_1 = 38, "Tank 3-1 Egg Piece 1", "Tank 3", LocationProgressType.DEFAULT
     TANK_3_1_EGG_PIECE_2 = 39, "Tank 3-1 Egg Piece 2", "Tank 3", LocationProgressType.DEFAULT
@@ -153,7 +153,7 @@ class InsaniquariumLocationData(enum.IntEnum):
     TANK_3_5_EGG_PIECE_2 = 51, "Tank 3-5 Egg Piece 2", "Tank 3", LocationProgressType.DEFAULT
     TANK_3_5_EGG_PIECE_3 = 52, "Tank 3-5 Egg Piece 3", "Tank 3", LocationProgressType.DEFAULT
     TIME_TRIAL_3_COMPLETE = 53, "Time Trial 3 Complete", "Tank 3", LocationProgressType.PRIORITY
-    CHALLENGE_3_COMPLETE = 54, "Challenge 3 Complete", "Tank 3", LocationProgressType.PRIORITY
+    CHALLENGE_3_COMPLETE = 54, "Challenge 3 Complete", "Tank 3", LocationProgressType.DEFAULT
     TANK_4_COMPLETE = 55, "Tank 4 Complete", "Tank 4", LocationProgressType.PRIORITY
     TANK_4_1_EGG_PIECE_1 = 56, "Tank 4-1 Egg Piece 1", "Tank 4", LocationProgressType.DEFAULT
     TANK_4_1_EGG_PIECE_2 = 57, "Tank 4-1 Egg Piece 2", "Tank 4", LocationProgressType.DEFAULT
@@ -171,10 +171,10 @@ class InsaniquariumLocationData(enum.IntEnum):
     TANK_4_5_EGG_PIECE_2 = 69, "Tank 4-5 Egg Piece 2", "Tank 4", LocationProgressType.DEFAULT
     TANK_4_5_EGG_PIECE_3 = 70, "Tank 4-5 Egg Piece 3", "Tank 4", LocationProgressType.DEFAULT
     TIME_TRIAL_4_COMPLETE = 71, "Time Trial 4 Complete", "Tank 4", LocationProgressType.PRIORITY
-    CHALLENGE_4_COMPLETE = 72, "Challenge 4 Complete", "Tank 4", LocationProgressType.PRIORITY
+    CHALLENGE_4_COMPLETE = 72, "Challenge 4 Complete", "Tank 4", LocationProgressType.DEFAULT
     CYRAX = 73, "Cyrax", "Tank 5", LocationProgressType.DEFAULT
-    BONUS_PET_1 = 74, "Bonus Pet 1", "Bonus Pets", LocationProgressType.PRIORITY
-    BONUS_PET_2 = 75, "Bonus Pet 2", "Bonus Pets", LocationProgressType.PRIORITY
+    BONUS_PET_1 = 74, "Bonus Pet 1", "Bonus Pets", LocationProgressType.DEFAULT
+    BONUS_PET_2 = 75, "Bonus Pet 2", "Bonus Pets", LocationProgressType.DEFAULT
     BONUS_PET_3 = 76, "Bonus Pet 3", "Bonus Pets", LocationProgressType.DEFAULT
     BONUS_PET_4 = 77, "Bonus Pet 4", "Bonus Pets", LocationProgressType.DEFAULT
     DEFEAT_SYLVESTER = 78, "Defeat Sylvester", "Tank 1", LocationProgressType.PRIORITY

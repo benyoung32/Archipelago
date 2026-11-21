@@ -441,13 +441,13 @@
     "code_name": "BONUS_PET_1",
     "name": "Bonus Pet 1",
     "region": "Bonus Pets",
-    "classification": "Priority"
+    "classification": "Default"
   },
   {
     "code_name": "BONUS_PET_2",
     "name": "Bonus Pet 2",
     "region": "Bonus Pets",
-    "classification": "Priority"
+    "classification": "Default"
   },
   {
     "code_name": "BONUS_PET_3",

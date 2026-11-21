@@ -70,9 +70,9 @@ class ChallengeModeRequired(Toggle):
 
 
 class BonusPetLocations(Range):
-    """Choose how many bonus pets are location checks (0 to 4).
-    0: Disables bonus pet checks.
-    1-4: Bonus Pet 1 through the selected number are location checks."""
+    """Choose how many bonus pet locations are allowed as default locations vs filler only (0 to 4).
+    0: All bonus pet checks are filler only.
+    1-4: Bonus Pet 1 through the selected number are default locations; remaining bonus pets are filler only."""
     display_name = "Bonus Pet Locations"
     range_start = 0
     range_end = 4

@@ -144,11 +144,14 @@ class InsaniquariumWorld(World):
         else:
             return item_data.STARTING_MONEY
 
-        return self.random.choices(
+        chosen = self.random.choices(
             list(pool.keys()),
             weights=list(pool.values()),
             k=1,
         )[0]
+        if chosen == item_data.BONUS_STARTING_GUPPY:
+            self.bonus_starting_guppies_created += 1
+        return chosen
 
     def get_filler_item(self) -> InsaniquariumItem:
         return self.create_item(self.get_filler_item_name())
